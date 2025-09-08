@@ -1,0 +1,14 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Modules
+node_modules
+dist
+
+# Editor directories and files
+.tsbuildinfo
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
