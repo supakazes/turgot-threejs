@@ -1,22 +1,45 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-// Remove default content
-document.querySelector("#app").innerHTML = "";
+const htmlApp = document.querySelector("#app");
 
 // Create scene, camera, renderer
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 const renderer = new THREE.WebGLRenderer();
+const controls = new OrbitControls(camera, renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.querySelector("#app").appendChild(renderer.domElement);
+htmlApp?.appendChild(renderer.domElement);
 
-// Create a cube
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+// Load texture for the floor
+const textureLoader = new THREE.TextureLoader();
+const floorTexture = textureLoader.load("src/assets/images/plan-dassemblage.jpg");
+floorTexture.wrapS = THREE.ClampToEdgeWrapping;
+floorTexture.wrapT = THREE.ClampToEdgeWrapping;
+floorTexture.minFilter = THREE.LinearFilter;
 
-camera.position.z = 5;
+// Plane dimensions (keep proportions)
+const planeWidth = 3.83; // scale down for scene units
+const planeHeight = 2.84;
+const floorGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+const floorMaterial = new THREE.MeshBasicMaterial({ map: floorTexture, side: THREE.DoubleSide });
+const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+floor.rotation.x = -Math.PI / 2; // Make it horizontal (floor)
+scene.add(floor);
+
+// scene helper (arrow)
+const dir = new THREE.Vector3(0, 1, 0);
+dir.normalize();
+const origin = new THREE.Vector3(0, 0, 0);
+const length = 1;
+const hex = 0xffff00;
+const arrowHelper = new THREE.ArrowHelper(dir, origin, length, hex);
+scene.add(arrowHelper);
+
+// Position camera above the floor, looking down
+camera.position.set(0, 5, 0);
+camera.lookAt(0, 0, 0);
+controls.update();
 
 // Handle window resize
 window.addEventListener("resize", () => {
@@ -28,8 +51,9 @@ window.addEventListener("resize", () => {
 // Animation loop
 function animate() {
   requestAnimationFrame(animate);
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  // required if controls.enableDamping or controls.autoRotate are set to true
+  controls.update();
+
   renderer.render(scene, camera);
 }
 animate();
