@@ -1,0 +1,17 @@
+top left du plan
+[2.396332303381996,48.849789392538895]
+donc coordonnées threejs 0,0
+
+top right du plan
+[2.344137363603636,48.823386268906006]
+donc coordonnées threejs 6480,0
+
+bottom left du plan
+[2.3508928551880217,48.88982206994834]
+donc coordonnées threejs 0,6710
+
+
+bottom right du plan
+[2.2976630443753265,48.863609838069664]
+donc coordonnées threejs 6480,6710
+
