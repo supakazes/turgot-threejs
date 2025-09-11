@@ -1,5 +1,5 @@
 top left du plan
-[2.396332303381996,48.849789392538895]
+[2.396332303381996,48.849789392538895] // lng, lat
 donc coordonnées threejs 0,0
 
 top right du plan
