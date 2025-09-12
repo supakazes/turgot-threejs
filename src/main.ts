@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { halfHeight, halfWidth, planeHeight, planeWidth } from "./constants/floor";
 import addCornerPoint from "./utils/addCornerPoint";
-import { localToLngLat } from "./utils/affine";
+import { lngLatToLocal, localToLngLat } from "./utils/affine";
 
 const documentApp = document.querySelector("#app");
 // Get DOM elements for displaying info
@@ -68,6 +68,10 @@ window.addEventListener("resize", () => {
 // Raycasting setup for clicking on the plane
 const raycaster = new THREE.Raycaster();
 const cursor = new THREE.Vector2();
+
+// Test bidirectional transformations
+const testBuilding = lngLatToLocal(2.370776561175262, 48.853650323484544);
+scene.add(addCornerPoint(testBuilding.x, testBuilding.y, 0xff00ff)); // Magenta point
 
 // Add event listener for mouse clicks
 window.addEventListener("click", (event) => {
