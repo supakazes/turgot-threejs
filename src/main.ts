@@ -3,6 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { halfHeight, halfWidth, planeHeight, planeWidth } from "./constants/floor";
 import getCoordinatesFromPlanePosition from "./utils/getCoordinatesFromPlanePosition";
 import addCornerPoint from "./utils/addCornerPoint";
+import { localToLngLat } from "./utils/affine";
 
 const documentApp = document.querySelector("#app");
 // Get DOM elements for displaying info
@@ -18,6 +19,11 @@ controls.maxPolarAngle = Math.PI / 2; // Limit vertical rotation to top-down vie
 renderer.setSize(window.innerWidth, window.innerHeight);
 documentApp?.appendChild(renderer.domElement);
 
+// Position camera above the floor, looking down
+camera.position.set(0, 5500, 0);
+camera.lookAt(0, 0, 0);
+controls.update();
+
 // Load texture for the floor
 const textureLoader = new THREE.TextureLoader();
 const floorTexture = textureLoader.load("src/assets/images/plan-dassemblage.jpg");
@@ -29,7 +35,7 @@ floorTexture.minFilter = THREE.LinearFilter;
 const floorGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
 const floorMaterial = new THREE.MeshBasicMaterial({ map: floorTexture, side: THREE.DoubleSide });
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-floor.rotation.x = -Math.PI / 2; // Make it horizontal (floor)
+floor.rotation.x = -Math.PI / 2; // Make it horizontal
 scene.add(floor);
 
 // scene helper (arrow)
@@ -42,16 +48,11 @@ const arrowHelper = new THREE.ArrowHelper(dir, origin, length, hex);
 scene.add(arrowHelper);
 
 // Create corner points with different colors
-scene.add(addCornerPoint(-halfWidth, -halfHeight, 0xff0000));
-scene.add(addCornerPoint(halfWidth, -halfHeight, 0x00ff00));
-scene.add(addCornerPoint(halfWidth, halfHeight, 0x0000ff));
-scene.add(addCornerPoint(-halfWidth, halfHeight, 0xffff00));
-scene.add(addCornerPoint(0, 0, 0x000000));
-
-// Position camera above the floor, looking down
-camera.position.set(0, 5500, 0);
-camera.lookAt(0, 0, 0);
-controls.update();
+scene.add(addCornerPoint(-halfWidth, -halfHeight, 0xff0000)); // top-left (red)
+scene.add(addCornerPoint(halfWidth, -halfHeight, 0x00ff00)); // top-right (green)
+scene.add(addCornerPoint(-halfWidth, halfHeight, 0x0000ff)); // bottom-left (blue)
+scene.add(addCornerPoint(halfWidth, halfHeight, 0xffff00)); // bottom-right (yellow)
+scene.add(addCornerPoint(0, 0, 0x000000)); // center (black)
 
 // Handle window resize
 window.addEventListener("resize", () => {
@@ -64,8 +65,6 @@ window.addEventListener("resize", () => {
 // Raycasting setup for clicking on the plane
 const raycaster = new THREE.Raycaster();
 const cursor = new THREE.Vector2();
-
-console.log("bottom left", getCoordinatesFromPlanePosition(-planeWidth / 2, -planeHeight / 2));
 
 // Add event listener for mouse clicks
 window.addEventListener("click", (event) => {
@@ -82,22 +81,21 @@ window.addEventListener("click", (event) => {
   // If the floor was clicked
   if (intersects.length > 0) {
     const point = intersects[0].point;
-    const [longitude, latitude] = getCoordinatesFromPlanePosition(point.x, point.z);
+    // In Three.js, y is up, z is depth - make sure we're using the correct coordinates
+    const { lng: longitude, lat: latitude } = localToLngLat(point.x, point.z);
 
     // Update the display elements
     if (positionDisplay) {
-      positionDisplay.textContent = `(${point.x.toFixed(2)}, ${point.z.toFixed(2)})`;
+      positionDisplay.textContent = `Position: (${point.x.toFixed(2)}, ${point.z.toFixed(2)})`;
     }
 
     if (coordinatesDisplay) {
-      coordinatesDisplay.textContent = `Longitude: ${longitude.toFixed(
-        7
-      )}, Latitude: ${latitude.toFixed(7)}`;
+      // Make sure the values are valid numbers before using toFixed
+      const lngFormatted = typeof longitude === "number" ? longitude.toFixed(7) : "Invalid";
+      const latFormatted = typeof latitude === "number" ? latitude.toFixed(7) : "Invalid";
+      coordinatesDisplay.textContent = `Longitude: ${lngFormatted}, Latitude: ${latFormatted}`;
+      console.log("longitude, latitude", longitude, latitude);
     }
-
-    // Still log to console for debugging
-    console.log(`Clicked at position (${point.x.toFixed(2)}, ${point.z.toFixed(2)})`);
-    console.log(`Longitude: ${longitude.toFixed(7)}, Latitude: ${latitude.toFixed(7)}`);
   }
 });
 
