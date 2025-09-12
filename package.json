@@ -15,6 +15,7 @@
     "vite": "^7.1.2"
   },
   "dependencies": {
+    "mathjs": "^14.7.0",
     "three": "^0.180.0"
   },
   "config": {
