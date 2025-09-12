@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { halfHeight, halfWidth, planeHeight, planeWidth } from "./constants/floor";
-import getCoordinatesFromPlanePosition from "./utils/getCoordinatesFromPlanePosition";
 import addCornerPoint from "./utils/addCornerPoint";
 import { localToLngLat } from "./utils/affine";
 
@@ -12,8 +11,12 @@ const coordinatesDisplay = document.getElementById("coordinates-display");
 
 // World setup
 const scene = new THREE.Scene();
+// No scene.background - using CSS background instead
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({
+  antialias: true,
+  alpha: true, // Enable transparency
+});
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.maxPolarAngle = Math.PI / 2; // Limit vertical rotation to top-down view
 renderer.setSize(window.innerWidth, window.innerHeight);
