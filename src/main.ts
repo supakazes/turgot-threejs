@@ -5,6 +5,9 @@ import getCoordinatesFromPlanePosition from "./utils/getCoordinatesFromPlanePosi
 import addCornerPoint from "./utils/addCornerPoint";
 
 const documentApp = document.querySelector("#app");
+// Get DOM elements for displaying info
+const positionDisplay = document.getElementById("position-display");
+const coordinatesDisplay = document.getElementById("coordinates-display");
 
 // World setup
 const scene = new THREE.Scene();
@@ -62,6 +65,8 @@ window.addEventListener("resize", () => {
 const raycaster = new THREE.Raycaster();
 const cursor = new THREE.Vector2();
 
+console.log("bottom left", getCoordinatesFromPlanePosition(-planeWidth / 2, -planeHeight / 2));
+
 // Add event listener for mouse clicks
 window.addEventListener("click", (event) => {
   // Calculate mouse position in normalized device coordinates (-1 to +1)
@@ -78,6 +83,19 @@ window.addEventListener("click", (event) => {
   if (intersects.length > 0) {
     const point = intersects[0].point;
     const [longitude, latitude] = getCoordinatesFromPlanePosition(point.x, point.z);
+
+    // Update the display elements
+    if (positionDisplay) {
+      positionDisplay.textContent = `(${point.x.toFixed(2)}, ${point.z.toFixed(2)})`;
+    }
+
+    if (coordinatesDisplay) {
+      coordinatesDisplay.textContent = `Longitude: ${longitude.toFixed(
+        7
+      )}, Latitude: ${latitude.toFixed(7)}`;
+    }
+
+    // Still log to console for debugging
     console.log(`Clicked at position (${point.x.toFixed(2)}, ${point.z.toFixed(2)})`);
     console.log(`Longitude: ${longitude.toFixed(7)}, Latitude: ${latitude.toFixed(7)}`);
   }

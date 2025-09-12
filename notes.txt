@@ -1,3 +1,4 @@
+//
 top left du plan
 [2.396332303381996,48.849789392538895] // lng, lat
 donc coordonnées threejs 0,0
@@ -10,8 +11,17 @@ bottom left du plan
 [2.3508928551880217,48.88982206994834]
 donc coordonnées threejs 0,6710
 
-
 bottom right du plan
 [2.2976630443753265,48.863609838069664]
 donc coordonnées threejs 6480,6710
 
+//
+get an image from bounds coordinates
+https://docs.mapbox.com/api/maps/static-images/
+
+West longitude: 2.2976630443753265 (from your bottomRight)
+South latitude: 48.849789392538895 (from your topLeft)
+East longitude: 2.396332303381996 (from your topLeft)
+North latitude: 48.863609838069664 (from your bottomRight)
+
+curl -g "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/[2.2976630443753265,48.849789392538895,2.396332303381996,48.863609838069664]/1280x1280?access_token=pk.eyJ1Ijoia2F6ZXMiLCJhIjoiMjBiMDc0M2UzYTdkY2NjZDZjZDVhZDdjYWMxMWU4NGMifQ.UbQyYB-QiEQklqy7AXI4XA" --output example-mapbox-static-bbox-1.png

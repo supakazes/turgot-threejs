@@ -34,3 +34,32 @@ body {
   width: 100vw;
   height: 100vh;
 }
+
+#info-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  padding: 15px;
+  color: white;
+  font-family: monospace;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.info-box {
+  margin-bottom: 10px;
+}
+
+.info-box h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 3px;
+}
+
+.info-box p {
+  margin: 0;
+  font-size: 14px;
+}
