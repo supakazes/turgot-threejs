@@ -25,3 +25,9 @@ East longitude: 2.396332303381996 (from your topLeft)
 North latitude: 48.863609838069664 (from your bottomRight)
 
 curl -g "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/[2.2976630443753265,48.849789392538895,2.396332303381996,48.863609838069664]/1280x1280?access_token=pk.eyJ1Ijoia2F6ZXMiLCJhIjoiMjBiMDc0M2UzYTdkY2NjZDZjZDVhZDdjYWMxMWU4NGMifQ.UbQyYB-QiEQklqy7AXI4XA" --output example-mapbox-static-bbox-1.png
+
+
+
+todo !
+quand on construit une shape avec des coordinées elles sont relatives, or la je les ajoute en absolu.
+

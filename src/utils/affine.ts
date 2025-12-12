@@ -98,16 +98,12 @@ function getBarycentricCoordinates(
 }
 
 export function lngLatToLocal(lng: number, lat: number) {
-  console.log("lngLatToLocal input:", { lng, lat });
-
   // We'll use the first triangle from our corners
   const geoTriangle = cornersGeoCoordinates.slice(0, 3);
   const localTriangle = cornersLocalCoordinates.slice(0, 3);
 
   // Get the barycentric coordinates of the point within the geo triangle
   const { alpha, beta, gamma } = getBarycentricCoordinates({ lng, lat }, geoTriangle);
-
-  console.log("Barycentric coordinates:", { alpha, beta, gamma });
 
   // Use the same barycentric coordinates to find the point in the local triangle
   const x = alpha * localTriangle[0].x + beta * localTriangle[1].x + gamma * localTriangle[2].x;
@@ -116,8 +112,6 @@ export function lngLatToLocal(lng: number, lat: number) {
   // Make sure values are numeric
   const numX = Number(x);
   const numY = Number(y);
-
-  console.log("lngLatToLocal result:", { x: numX, y: numY });
 
   return { x: numX, y: numY };
 }
