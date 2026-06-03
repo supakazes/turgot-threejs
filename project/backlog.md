@@ -1,258 +1,398 @@
 # Backlog Vertical Slice
 
-## VS-001 Initialiser le projet Vite + TypeScript + Three.js
+## Priorités
 
-Estimation : 2h
+### P0 — Fondations (obligatoire)
 
-Pourquoi :
+- VS-001 à VS-006
 
-Créer une base propre et moderne.
+### P1 — Effet Wow (très important)
 
-Comment faire :
+- VS-007 à VS-012
 
-- Créer projet Vite TS
-- Installer Three.js
-- Installer OrbitControls
-- Mettre en place ESLint et Prettier
+### P2 — Interaction
 
-Critères d'acceptation :
+- VS-013 à VS-015
 
-- npm run dev fonctionne
-- scène vide affichée
+### P3 — Finalisation
+
+- VS-016 à VS-017
 
 ---
 
-## VS-002 Définir l'architecture du projet
+# VS-001 Initialiser le projet Vite + TypeScript + Three.js
 
-Estimation : 1h
+**Estimation :** 2h
 
-Comment faire :
+## Pourquoi
+
+Créer une base propre et moderne.
+
+## Comment faire
+
+```bash
+npm create vite@latest
+npm install three
+npm install -D @types/three
+```
 
 Créer :
 
-- src/core
-- src/scenes
-- src/ui
-- src/data
-- src/utils
+```text
+src/
+  main.ts
+  App.ts
+  core/
+```
 
-Critères :
+## Critères d'acceptation
 
+- npm run dev fonctionne
+- écran non noir
+- grille visible
+- hot reload actif
+
+---
+
+# VS-002 Définir l'architecture du projet
+
+**Estimation :** 1h
+
+## Pourquoi
+
+Éviter la dette technique.
+
+## Comment faire
+
+Créer :
+
+```text
+src/
+  core/
+  renderer/
+  camera/
+  scene/
+  loaders/
+  poi/
+  ui/
+  data/
+  utils/
+```
+
+## Critères d'acceptation
+
+- aucune logique métier dans main.ts
 - structure documentée
 
 ---
 
-## VS-003 Valider le pipeline Blender → GLB
+# VS-003 Valider le pipeline QGIS → Blender → GLB
 
-Estimation : 3h
+**Estimation :** 3h
 
-Comment faire :
+## Pourquoi
 
-- exporter un modèle test
-- vérifier matériaux
-- vérifier échelle
+Garantir un pipeline reproductible.
 
-Critères :
+## Comment faire
 
-- GLB réutilisable dans Three.js
+Documenter :
 
----
+```text
+QGIS
+ ↓
+GeoJSON
+ ↓
+Blender GIS
+ ↓
+Nettoyage
+ ↓
+GLB
+```
 
-## VS-004 Charger un GLB dans Three.js
+Créer un document décrivant chaque étape.
 
-Estimation : 2h
+## Critères d'acceptation
 
-Comment faire :
-
-- GLTFLoader
-- gestion des erreurs
-- affichage dans la scène
-
-Critères :
-
-- modèle visible
-
----
-
-## VS-005 Navigation caméra
-
-Estimation : 2h
-
-Comment faire :
-
-- OrbitControls
-- limites de zoom
-- angle minimum / maximum
-
-Critères :
-
-- navigation agréable
+- pipeline reproductible depuis zéro
 
 ---
 
-## VS-006 Import de la planche 11
+# VS-004 Charger un GLB dans Three.js
 
-Estimation : 3h
+**Estimation :** 2h
 
-Comment faire :
+## Comment faire
 
-- export Blender
-- import Three.js
-- vérification des coordonnées
+Créer :
 
-Critères :
+```text
+GLBLoader.ts
+```
 
-- planche visible et exploitable
+Ajouter :
 
----
+- chargement asynchrone
+- gestion erreurs
+- centrage modèle
 
-## VS-007 Notre-Dame (zone héro)
+## Critères d'acceptation
 
-Estimation : 4h
-
-Comment faire :
-
-- améliorer géométrie
-- améliorer textures
-
-Critères :
-
-- élément visuellement marquant
+- GLB visible
+- erreurs affichées proprement
 
 ---
 
-## VS-008 Pont-Neuf
+# VS-005 Navigation caméra
 
-Estimation : 3h
+**Estimation :** 2h
 
-Critères :
+## Comment faire
+
+Configurer OrbitControls :
+
+- zoom min/max
+- angle min/max
+- focus sur cible
+
+Ajouter :
+
+- double clic → focus
+
+## Critères d'acceptation
+
+- impossible de passer sous le terrain
+- navigation confortable
+
+---
+
+# VS-006 Import complet de la planche 11
+
+**Estimation :** 3h
+
+## Comment faire
+
+Exporter :
+
+- bâtiments
+- rues
+- quais
+- ponts
+
+dans un GLB unique.
+
+## Critères d'acceptation
+
+- géométrie visible
+- échelle correcte
+
+---
+
+# VS-007 Notre-Dame (Zone Héro)
+
+**Estimation :** 4h
+
+## Pourquoi
+
+Point focal principal de la démo.
+
+## Comment faire
+
+Améliorer :
+
+- tours
+- toiture
+- contreforts
+
+Créer un éclairage dédié.
+
+## Critères d'acceptation
+
+- capture promotionnelle possible
+
+---
+
+# VS-008 Pont-Neuf
+
+**Estimation :** 3h
+
+## Comment faire
+
+Accent sur :
+
+- arches
+- silhouette
+- visibilité
+
+## Critères d'acceptation
 
 - identifiable immédiatement
 
 ---
 
-## VS-009 Palais de Justice
+# VS-009 Palais de Justice
 
-Estimation : 3h
+**Estimation :** 3h
 
-Critères :
+## Critères d'acceptation
 
-- identifiable immédiatement
-
----
-
-## VS-010 Place Dauphine
-
-Estimation : 2h
-
-Critères :
-
-- cohérente avec l'environnement
+- visible depuis Notre-Dame
+- identifiable
 
 ---
 
-## VS-011 Seine et embarcations
+# VS-010 Place Dauphine
 
-Estimation : 3h
+**Estimation :** 2h
 
-Comment faire :
+## Critères d'acceptation
 
-- matériau eau
-- quelques bateaux
+- cohérence urbaine
+- lecture claire du quartier
 
-Critères :
+---
+
+# VS-011A Eau
+
+**Estimation :** 2h
+
+## Comment faire
+
+Créer matériau eau simple.
+
+## Critères d'acceptation
+
+- Seine immédiatement identifiable
+
+---
+
+# VS-011B Embarcations
+
+**Estimation :** 2h
+
+## Comment faire
+
+Ajouter quelques bateaux.
+
+## Critères d'acceptation
 
 - scène plus vivante
 
 ---
 
-## VS-012 Style graphique Turgot
+# VS-012 Style graphique Turgot
 
-Estimation : 4h
+**Estimation :** 4h
 
-Comment faire :
+## Comment faire
 
-- éclairage
+Travailler :
+
 - couleurs
+- éclairage
+- ambiance
 - matériaux
 
-Critères :
+## Critères d'acceptation
 
 - identité visuelle cohérente
 
 ---
 
-## VS-013 Système de POI
+# VS-013 Système de POI
 
-Estimation : 3h
+**Estimation :** 3h
 
-Comment faire :
+## Comment faire
 
-- raycast
-- sélection
+Utiliser Raycaster.
 
-Critères :
+États :
 
-- clic fonctionnel
+- hover
+- selected
 
----
+## Critères d'acceptation
 
-## VS-014 Interface des POI
-
-Estimation : 3h
-
-Comment faire :
-
-- panneau HTML
-- contenu descriptif
-
-Critères :
-
-- affichage d'informations
+- sélection visuelle fonctionnelle
 
 ---
 
-## VS-015 Comparaison Paris actuel
+# VS-014 Interface des POI
 
-Estimation : 4h
+**Estimation :** 3h
 
-Comment faire :
+## Comment faire
 
-- photo
-- carte
-- vue associée
+Structure :
 
-Critères :
+```text
+titre
+description
+image
+sources
+```
 
-- comparaison claire
+## Critères d'acceptation
 
----
-
-## VS-016 Optimisation
-
-Estimation : 2h
-
-Comment faire :
-
-- compression
-- nettoyage
-
-Critères :
-
-- chargement fluide
+- panneau HTML moderne
+- fermeture intuitive
 
 ---
 
-## VS-017 Préparation démo
+# VS-015 Comparaison Paris actuel
 
-Estimation : 2h
+**Estimation :** 4h
 
-Comment faire :
+## Comment faire
 
-- tests complets
-- correction bugs
-- vérification parcours utilisateur
+Version minimale :
 
-Critères :
+- image historique
+- image actuelle
 
-- démonstration stable
+## Critères d'acceptation
+
+- effet avant/après compréhensible
+
+---
+
+# VS-016 Optimisation
+
+**Estimation :** 2h
+
+## Comment faire
+
+- merge mesh
+- compression Draco
+- nettoyage textures
+
+## Critères d'acceptation
+
+- chargement < 5 secondes
+
+---
+
+# VS-017 Préparation démo
+
+**Estimation :** 2h
+
+## Comment faire
+
+Parcours :
+
+1. Vue générale
+2. Notre-Dame
+3. Pont-Neuf
+4. Place Dauphine
+5. POI
+6. Comparaison actuelle
+
+## Critères d'acceptation
+
+- démo complète < 3 minutes
+- aucun bug bloquant
+
+```
+
+```
