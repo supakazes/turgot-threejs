@@ -1,6 +1,7 @@
 # Workflow
 
 Colonnes projet :
+
 - Backlog
 - Ready
 - Todo this week
@@ -10,6 +11,7 @@ Colonnes projet :
 - Done
 
 Règles :
+
 - Un seul ticket en cours.
 - Les tickets doivent contenir une section 'Comment faire'.
 - Les tickets doivent être réalisables en 1 à 4 heures.
