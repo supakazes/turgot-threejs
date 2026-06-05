@@ -86,35 +86,165 @@ src/
 
 ---
 
-# VS-003 Valider le pipeline QGIS → Blender → GLB
+# VS-003 Documentation du pipeline QGIS → Blender → GLB
 
-**Estimation :** 3h
+**Estimation :** 1h
 
 ## Pourquoi
 
-Garantir un pipeline reproductible.
+Documenter l'ensemble de la chaîne de production afin de pouvoir reconstruire les données à partir de zéro plusieurs mois plus tard.
 
 ## Comment faire
 
 Documenter :
 
 ```text
+Plan Turgot
+ ↓
 QGIS
  ↓
-GeoJSON
- ↓
-Blender GIS
+Vectorisation
  ↓
 Nettoyage
  ↓
+Blender GIS
+ ↓
+Extrusion
+ ↓
 GLB
+ ↓
+Three.js
 ```
 
-Créer un document décrivant chaque étape.
+Créer un document décrivant chaque étape, les outils utilisés et les formats d'échange.
 
 ## Critères d'acceptation
 
-- pipeline reproductible depuis zéro
+- pipeline documenté de bout en bout
+- reconstruction possible sans mémoire externe
+
+---
+
+# VS-003A Géoréférencement de la planche 11
+
+**Estimation :** 2h
+
+## Pourquoi
+
+Positionner correctement la planche Turgot dans le système de coordonnées moderne.
+
+## Comment faire
+
+- importer la planche dans QGIS
+- choisir plusieurs points de contrôle
+- aligner avec les données actuelles
+- vérifier la précision visuellement
+
+## Critères d'acceptation
+
+- géoréférencement stable
+- décalage visuel faible sur les repères principaux
+
+---
+
+# VS-003B Découpage de la zone héro
+
+**Estimation :** 1h
+
+## Pourquoi
+
+Limiter le travail de vectorisation à la zone réellement utilisée dans la démo.
+
+## Comment faire
+
+Définir précisément :
+
+- Notre-Dame
+- Pont-Neuf
+- Palais de Justice
+- Place Dauphine
+- Seine adjacente
+
+Créer une couche représentant le périmètre de travail.
+
+## Critères d'acceptation
+
+- périmètre validé
+- aucune zone inutile incluse
+
+---
+
+# VS-003C Vectorisation des zones
+
+**Estimation :** 4h
+
+## Pourquoi
+
+Créer les données géométriques qui serviront à Blender.
+
+## Comment faire
+
+Créer des couches séparées :
+
+- bâtiments
+- voirie
+- ponts
+- quais
+- îles
+- Seine
+
+Privilégier une vectorisation propre plutôt qu'exhaustive.
+
+## Critères d'acceptation
+
+- couches séparées
+- géométries fermées
+- pas de trous majeurs
+
+---
+
+# VS-003D Nettoyage topologique
+
+**Estimation :** 2h
+
+## Pourquoi
+
+Éviter les problèmes lors de l'import dans Blender.
+
+## Comment faire
+
+- corriger les polygones invalides
+- supprimer les doublons
+- corriger les intersections
+- vérifier les géométries
+
+## Critères d'acceptation
+
+- export GeoJSON sans erreur
+- géométries valides
+
+---
+
+# VS-003E Préparation Blender GIS
+
+**Estimation :** 2h
+
+## Pourquoi
+
+Valider le passage entre QGIS et Blender.
+
+## Comment faire
+
+- importer les couches dans Blender GIS
+- vérifier les coordonnées
+- vérifier les dimensions
+- vérifier l'échelle
+
+## Critères d'acceptation
+
+- import sans erreur
+- échelle cohérente
+- données exploitables pour extrusion
 
 ---
 
