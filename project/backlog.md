@@ -1,528 +1,349 @@
 # Backlog Vertical Slice
 
-## Priorités
+## Priorities
 
-### P0 — Fondations (obligatoire)
+### P0 — Data & Pipeline
 
-- VS-001 à VS-006
+- VS-001 → VS-007
 
-### P1 — Effet Wow (très important)
+### P1 — Turgot Visual Identity
 
-- VS-007 à VS-012
+- VS-008 → VS-011
 
-### P2 — Interaction
+### P2 — Hero Zone
 
-- VS-013 à VS-015
+- VS-012 → VS-015
 
-### P3 — Finalisation
+### P3 — Interaction
 
-- VS-016 à VS-017
+- VS-016 → VS-018
 
----
+### P4 — Demo Polish
 
-# VS-001 Initialiser le projet Vite + TypeScript + Three.js
-
-**Estimation :** 2h
-
-## Pourquoi
-
-Créer une base propre et moderne.
-
-## Comment faire
-
-```bash
-npm create vite@latest
-npm install three
-npm install -D @types/three
-```
-
-Créer :
-
-```text
-src/
-  main.ts
-  App.ts
-  core/
-```
-
-## Critères d'acceptation
-
-- npm run dev fonctionne
-- écran non noir
-- grille visible
-- hot reload actif
+- VS-019
 
 ---
 
-# VS-002 Définir l'architecture du projet
+# VS-001 Initialize Vite + TypeScript + Three.js
 
-**Estimation :** 1h
+**Estimate:** 2h
 
-## Pourquoi
+## Acceptance Criteria
 
-Éviter la dette technique.
+- npm run dev works
+- visible grid
+- hot reload enabled
 
-## Comment faire
+---
 
-Créer :
+# VS-002 Define Project Architecture
+
+**Estimate:** 1h
+
+Structure:
 
 ```text
 src/
   core/
-  renderer/
   camera/
   scene/
+  renderer/
   loaders/
-  poi/
   ui/
+  poi/
   data/
   utils/
 ```
 
-## Critères d'acceptation
+## Acceptance Criteria
 
-- aucune logique métier dans main.ts
-- structure documentée
+- no business logic in main.ts
 
 ---
 
-# VS-003 Documentation du pipeline QGIS → Blender → GLB
+# VS-003 Document Production Pipeline
 
-**Estimation :** 1h
+**Estimate:** 1h
 
-## Pourquoi
-
-Documenter l'ensemble de la chaîne de production afin de pouvoir reconstruire les données à partir de zéro plusieurs mois plus tard.
-
-## Comment faire
-
-Documenter :
+Document:
 
 ```text
-Plan Turgot
- ↓
+Turgot
+↓
 QGIS
- ↓
-Vectorisation
- ↓
-Nettoyage
- ↓
-Blender GIS
- ↓
-Extrusion
- ↓
+↓
+Vectorization
+↓
+Blender
+↓
+Geometry Nodes
+↓
 GLB
- ↓
+↓
 Three.js
 ```
 
-Créer un document décrivant chaque étape, les outils utilisés et les formats d'échange.
+## Acceptance Criteria
 
-## Critères d'acceptation
-
-- pipeline documenté de bout en bout
-- reconstruction possible sans mémoire externe
+- complete rebuild possible from documentation
 
 ---
 
-# VS-003A Géoréférencement de la planche 11
+# VS-004 Define Building Attribute Model
 
-**Estimation :** 2h
+**Estimate:** 2h
 
-## Pourquoi
+## Why
 
-Positionner correctement la planche Turgot dans le système de coordonnées moderne.
+All future procedural generation depends on this.
 
-## Comment faire
+## Fields
 
-- importer la planche dans QGIS
-- choisir plusieurs points de contrôle
-- aligner avec les données actuelles
-- vérifier la précision visuellement
+```text
+id
+name
+height
+roof_type
+building_type
+landmark
+poi_id
+era_confidence
+source
+```
 
-## Critères d'acceptation
+## Acceptance Criteria
 
-- géoréférencement stable
-- décalage visuel faible sur les repères principaux
+- schema documented
+- QGIS fields created
 
 ---
 
-# VS-003B Découpage de la zone héro
+# VS-005 Georeference Plate 11
 
-**Estimation :** 1h
+**Estimate:** 2h
 
-## Pourquoi
+## Acceptance Criteria
 
-Limiter le travail de vectorisation à la zone réellement utilisée dans la démo.
+- acceptable alignment with modern Paris
 
-## Comment faire
+---
 
-Définir précisément :
+# VS-006 Hero Area Definition
+
+**Estimate:** 1h
+
+Area:
 
 - Notre-Dame
 - Pont-Neuf
 - Palais de Justice
 - Place Dauphine
-- Seine adjacente
+- Adjacent Seine
 
-Créer une couche représentant le périmètre de travail.
+## Acceptance Criteria
 
-## Critères d'acceptation
-
-- périmètre validé
-- aucune zone inutile incluse
+- perimeter validated
 
 ---
 
-# VS-003C Vectorisation des zones
+# VS-007 Vectorization + Blender Validation
 
-**Estimation :** 4h
+**Estimate:** 8h
 
-## Pourquoi
+Layers:
 
-Créer les données géométriques qui serviront à Blender.
-
-## Comment faire
-
-Créer des couches séparées :
-
-- bâtiments
-- voirie
-- ponts
-- quais
-- îles
+- buildings
+- roads
+- bridges
+- quays
+- islands
 - Seine
 
-Privilégier une vectorisation propre plutôt qu'exhaustive.
+Tasks:
 
-## Critères d'acceptation
+- topology cleanup
+- Blender GIS import
+- Geometry Nodes validation
 
-- couches séparées
-- géométries fermées
-- pas de trous majeurs
+## Acceptance Criteria
 
----
-
-# VS-003D Nettoyage topologique
-
-**Estimation :** 2h
-
-## Pourquoi
-
-Éviter les problèmes lors de l'import dans Blender.
-
-## Comment faire
-
-- corriger les polygones invalides
-- supprimer les doublons
-- corriger les intersections
-- vérifier les géométries
-
-## Critères d'acceptation
-
-- export GeoJSON sans erreur
-- géométries valides
+- clean geometry
+- successful Blender import
+- successful GLB export
 
 ---
 
-# VS-003E Préparation Blender GIS
+# VS-008 Import Complete Plate 11 in Three.js
 
-**Estimation :** 2h
+**Estimate:** 3h
 
-## Pourquoi
+## Acceptance Criteria
 
-Valider le passage entre QGIS et Blender.
-
-## Comment faire
-
-- importer les couches dans Blender GIS
-- vérifier les coordonnées
-- vérifier les dimensions
-- vérifier l'échelle
-
-## Critères d'acceptation
-
-- import sans erreur
-- échelle cohérente
-- données exploitables pour extrusion
+- full plate visible
+- correct scale
 
 ---
 
-# VS-004 Charger un GLB dans Three.js
+# VS-009 Performance Baseline
 
-**Estimation :** 2h
+**Estimate:** 2h
 
-## Comment faire
+Tasks:
 
-Créer :
+- mesh merge
+- Draco compression
+- loading measurements
 
-```text
-GLBLoader.ts
-```
+## Acceptance Criteria
 
-Ajouter :
-
-- chargement asynchrone
-- gestion erreurs
-- centrage modèle
-
-## Critères d'acceptation
-
-- GLB visible
-- erreurs affichées proprement
+- load time under 5 seconds
 
 ---
 
-# VS-005 Navigation caméra
+# VS-010 Turgot Materials
 
-**Estimation :** 2h
+**Estimate:** 2h
 
-## Comment faire
+Goal:
 
-Configurer OrbitControls :
+- paper appearance
+- engraving palette
+- coherent roof rendering
 
-- zoom min/max
-- angle min/max
-- focus sur cible
+## Acceptance Criteria
 
-Ajouter :
-
-- double clic → focus
-
-## Critères d'acceptation
-
-- impossible de passer sous le terrain
-- navigation confortable
+- immediately evokes the original map
 
 ---
 
-# VS-006 Import complet de la planche 11
+# VS-011 Turgot Rendering Style
 
-**Estimation :** 3h
+**Estimate:** 5h
 
-## Comment faire
+Investigate:
 
-Exporter :
+- outlines
+- hatching
+- post-processing
+- paper overlay
+- shadow treatment
 
-- bâtiments
-- rues
-- quais
-- ponts
+## Acceptance Criteria
 
-dans un GLB unique.
-
-## Critères d'acceptation
-
-- géométrie visible
-- échelle correcte
+- "paper map becomes 3D" effect achieved
 
 ---
 
-# VS-007 Notre-Dame (Zone Héro)
+# VS-012 Notre-Dame
 
-**Estimation :** 4h
+**Estimate:** 4h
 
-## Pourquoi
+## Acceptance Criteria
 
-Point focal principal de la démo.
-
-## Comment faire
-
-Améliorer :
-
-- tours
-- toiture
-- contreforts
-
-Créer un éclairage dédié.
-
-## Critères d'acceptation
-
-- capture promotionnelle possible
+- hero quality asset
 
 ---
 
-# VS-008 Pont-Neuf
+# VS-013 Pont-Neuf
 
-**Estimation :** 3h
+**Estimate:** 3h
 
-## Comment faire
+## Acceptance Criteria
 
-Accent sur :
-
-- arches
-- silhouette
-- visibilité
-
-## Critères d'acceptation
-
-- identifiable immédiatement
+- instantly recognizable
 
 ---
 
-# VS-009 Palais de Justice
+# VS-014 Palais de Justice
 
-**Estimation :** 3h
+**Estimate:** 3h
 
-## Critères d'acceptation
+## Acceptance Criteria
 
-- visible depuis Notre-Dame
-- identifiable
-
----
-
-# VS-010 Place Dauphine
-
-**Estimation :** 2h
-
-## Critères d'acceptation
-
-- cohérence urbaine
-- lecture claire du quartier
+- recognizable silhouette
 
 ---
 
-# VS-011A Eau
+# VS-015 Place Dauphine + Seine + Boats
 
-**Estimation :** 2h
+**Estimate:** 4h
 
-## Comment faire
+## Acceptance Criteria
 
-Créer matériau eau simple.
-
-## Critères d'acceptation
-
-- Seine immédiatement identifiable
+- lively environment
+- coherent urban composition
 
 ---
 
-# VS-011B Embarcations
+# VS-016 POI System
 
-**Estimation :** 2h
+**Estimate:** 3h
 
-## Comment faire
+Features:
 
-Ajouter quelques bateaux.
-
-## Critères d'acceptation
-
-- scène plus vivante
-
----
-
-# VS-012 Style graphique Turgot
-
-**Estimation :** 4h
-
-## Comment faire
-
-Travailler :
-
-- couleurs
-- éclairage
-- ambiance
-- matériaux
-
-## Critères d'acceptation
-
-- identité visuelle cohérente
-
----
-
-# VS-013 Système de POI
-
-**Estimation :** 3h
-
-## Comment faire
-
-Utiliser Raycaster.
-
-États :
-
+- raycasting
 - hover
-- selected
+- selection
 
-## Critères d'acceptation
+## Acceptance Criteria
 
-- sélection visuelle fonctionnelle
-
----
-
-# VS-014 Interface des POI
-
-**Estimation :** 3h
-
-## Comment faire
-
-Structure :
-
-```text
-titre
-description
-image
-sources
-```
-
-## Critères d'acceptation
-
-- panneau HTML moderne
-- fermeture intuitive
+- reliable interaction
 
 ---
 
-# VS-015 Comparaison Paris actuel
+# VS-017 POI Interface
 
-**Estimation :** 4h
+**Estimate:** 3h
 
-## Comment faire
+Content:
 
-Version minimale :
+- title
+- anecdote
+- images
+- sources
 
-- image historique
-- image actuelle
+## Acceptance Criteria
 
-## Critères d'acceptation
-
-- effet avant/après compréhensible
-
----
-
-# VS-016 Optimisation
-
-**Estimation :** 2h
-
-## Comment faire
-
-- merge mesh
-- compression Draco
-- nettoyage textures
-
-## Critères d'acceptation
-
-- chargement < 5 secondes
+- polished panel
 
 ---
 
-# VS-017 Préparation démo
+# VS-018 Present-Day Paris Comparison
 
-**Estimation :** 2h
+**Estimate:** 4h
 
-## Comment faire
+Version 1:
 
-Parcours :
+- historical view
+- current view
 
-1. Vue générale
-2. Notre-Dame
-3. Pont-Neuf
-4. Place Dauphine
-5. POI
-6. Comparaison actuelle
+Possible overlays:
 
-## Critères d'acceptation
+- metro stations
+- metro lines
+- modern landmarks
 
-- démo complète < 3 minutes
-- aucun bug bloquant
+## Acceptance Criteria
 
-```
+- immediate understanding of location
 
-```
+---
+
+# VS-019 Demo Preparation
+
+**Estimate:** 2h
+
+Demo sequence:
+
+1. Global view
+2. Turgot visual effect
+3. Notre-Dame
+4. Pont-Neuf
+5. POIs
+6. Modern Paris comparison
+
+## Acceptance Criteria
+
+- demo under 3 minutes
+- no blocking bugs
+- stable deployment
