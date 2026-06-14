@@ -1,4 +1,4 @@
-# pipeline QGIS → Blender → GLB
+# Workflow from QGIS to Blender to GLB
 
 Full pipeline documentation from QGIS to GLB file. The goal is to be able to reproduce this worklow from scratch without any knowledge.
 
