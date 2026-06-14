@@ -1,28 +1,70 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
+const app = document.getElementById("app")!;
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10000);
+camera.position.set(0, 200, 300);
+
 const renderer = new THREE.WebGLRenderer({ antialias: true });
+app.appendChild(renderer.domElement);
 
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.querySelector("#app")?.appendChild(renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
 
-const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshNormalMaterial());
+// Lights
+scene.add(new THREE.AmbientLight(0xffffff, 2));
 
-scene.add(cube);
-camera.position.z = 3;
+const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+dirLight.position.set(100, 200, 100);
+scene.add(dirLight);
 
+// Helpers
+scene.add(new THREE.AxesHelper(100));
+scene.add(new THREE.GridHelper(1000, 100));
+
+// GLB
+const loader = new GLTFLoader();
+
+loader.load(
+  "/models/buildings/buildings.glb",
+  (gltf) => {
+    scene.add(gltf.scene);
+
+    gltf.scene.traverse((obj) => {
+      if ((obj as THREE.Mesh).isMesh) {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      }
+    });
+  },
+  undefined,
+  console.error,
+);
+
+// Resize
+function onResize() {
+  const width = app.clientWidth;
+  const height = app.clientHeight;
+
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(width, height);
+}
+
+window.addEventListener("resize", onResize);
+onResize();
+
+// Render loop
 function animate() {
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  requestAnimationFrame(animate);
 
+  controls.update();
   renderer.render(scene, camera);
 }
 
-renderer.setAnimationLoop(animate);
-
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+animate();
