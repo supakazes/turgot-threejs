@@ -5,13 +5,10 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 const app = document.getElementById("app")!;
 
 const scene = new THREE.Scene();
-
 const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10000);
 camera.position.set(0, 200, 300);
-
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 app.appendChild(renderer.domElement);
-
 const controls = new OrbitControls(camera, renderer.domElement);
 
 // Lights
@@ -29,7 +26,7 @@ scene.add(new THREE.GridHelper(1000, 100));
 const loader = new GLTFLoader();
 
 loader.load(
-  "/models/buildings/buildings.glb",
+  "./models/buildings/buildings.glb",
   (gltf) => {
     scene.add(gltf.scene);
 
