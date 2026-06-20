@@ -20,26 +20,25 @@ scene.add(dirLight);
 
 // Helpers
 scene.add(new THREE.AxesHelper(100));
-scene.add(new THREE.GridHelper(1000, 100));
+scene.add(new THREE.GridHelper(3000, 100));
 
-// GLB
+// GLB loader
 const loader = new GLTFLoader();
 
-loader.load(
-  "./models/buildings/buildings.glb",
-  (gltf) => {
-    scene.add(gltf.scene);
+// regular buildings
+loader.load("./models/buildings/buildings.glb", (gltf) => {
+  scene.add(gltf.scene);
+});
 
-    gltf.scene.traverse((obj) => {
-      if ((obj as THREE.Mesh).isMesh) {
-        obj.castShadow = true;
-        obj.receiveShadow = true;
-      }
-    });
-  },
-  undefined,
-  console.error,
-);
+// specific buildings
+loader.load("./models/buildings/specific-buildings.glb", (gltf) => {
+  scene.add(gltf.scene);
+});
+
+// la seine
+loader.load("./models/buildings/la-seine.glb", (gltf) => {
+  scene.add(gltf.scene);
+});
 
 // Resize
 function onResize() {
