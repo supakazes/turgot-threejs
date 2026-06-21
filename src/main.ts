@@ -8,8 +8,20 @@ const app = document.getElementById("app")!;
 const scene = new THREE.Scene();
 
 // Camera
-const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10000);
-camera.position.set(0, 200, 300);
+const aspect = window.innerWidth / window.innerHeight;
+const frustumSize = 1000;
+
+const camera = new THREE.OrthographicCamera(
+  (-frustumSize * aspect) / 2, // left
+  (frustumSize * aspect) / 2, // right
+  frustumSize / 2, // top
+  -frustumSize / 2, // bottom
+  0.1, // near
+  10000, // far
+);
+
+camera.position.set(0, 500, 500);
+camera.lookAt(0, 0, 0);
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -50,17 +62,37 @@ loader.load("./models/buildings/la-seine.glb", (gltf) => {
 });
 
 // frame
-loader.load("./models/buildings/frame.glb", (gltf) => {
-  scene.add(gltf.scene);
-});
+const texture = new THREE.TextureLoader().load("./images/sheet_11.jpg");
+texture.colorSpace = THREE.SRGBColorSpace;
+const plane = new THREE.Mesh(
+  new THREE.PlaneGeometry(1823, 1723),
+  new THREE.MeshBasicMaterial({
+    map: texture,
+    side: THREE.DoubleSide,
+  }),
+);
+
+plane.rotation.x = -Math.PI / 2;
+
+plane.position.set(1.84, 30, -8.36);
+
+scene.add(plane);
 
 // Resize
 function onResize() {
   const width = app.clientWidth;
   const height = app.clientHeight;
 
-  camera.aspect = width / height;
+  const aspect = width / height;
+
+  camera.left = (-frustumSize * aspect) / 2;
+  camera.right = (frustumSize * aspect) / 2;
+  camera.top = frustumSize / 2;
+  camera.bottom = -frustumSize / 2;
+
   camera.updateProjectionMatrix();
+
+  renderer.setSize(width, height);
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(width, height);
