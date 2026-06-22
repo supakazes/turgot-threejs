@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import GUI from "lil-gui";
+
+const gui = new GUI();
 
 const app = document.getElementById("app")!;
 
@@ -25,7 +28,8 @@ camera.lookAt(0, 0, 0);
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setClearColor("#fdf6e1", 1);
+// renderer.setClearColor("#fdf6e1", 1);
+renderer.setClearColor("#000000", 1);
 app.appendChild(renderer.domElement);
 
 // Controls
@@ -46,37 +50,101 @@ scene.add(new THREE.GridHelper(3000, 100));
 // GLB loader
 const loader = new GLTFLoader();
 
+const allModels = new THREE.Group();
+scene.add(allModels);
+
 // regular buildings
 loader.load("./models/buildings/buildings.glb", (gltf) => {
-  scene.add(gltf.scene);
+  prepareModel(gltf.scene);
+  allModels.add(gltf.scene);
+  setOpacity(params.opacity);
 });
 
 // specific buildings
 loader.load("./models/buildings/specific-buildings.glb", (gltf) => {
-  scene.add(gltf.scene);
+  prepareModel(gltf.scene);
+  allModels.add(gltf.scene);
+  setOpacity(params.opacity);
 });
 
 // la seine
 loader.load("./models/buildings/la-seine.glb", (gltf) => {
-  scene.add(gltf.scene);
+  prepareModel(gltf.scene);
+  allModels.add(gltf.scene);
+  setOpacity(params.opacity);
 });
 
 // frame
 const texture = new THREE.TextureLoader().load("./images/sheet_11.jpg");
 texture.colorSpace = THREE.SRGBColorSpace;
-const plane = new THREE.Mesh(
+const frame = new THREE.Mesh(
   new THREE.PlaneGeometry(1823, 1723),
   new THREE.MeshBasicMaterial({
     map: texture,
     side: THREE.DoubleSide,
   }),
 );
+frame.rotation.x = -Math.PI / 2;
+frame.position.set(1.84, 0, -8.36);
+frame.material.transparent = true;
+scene.add(frame);
 
-plane.rotation.x = -Math.PI / 2;
+function setOpacity(opacity: number) {
+  allModels.traverse((obj) => {
+    if (obj instanceof THREE.Mesh) {
+      const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
 
-plane.position.set(1.84, 30, -8.36);
+      materials.forEach((mat) => {
+        mat.transparent = true;
+        mat.opacity = opacity;
+        mat.depthWrite = false;
+      });
+    }
+  });
+}
 
-scene.add(plane);
+function prepareModel(root: THREE.Object3D) {
+  root.traverse((obj) => {
+    if (obj instanceof THREE.Mesh) {
+      obj.material = new THREE.MeshStandardMaterial({
+        color: 0xcccccc,
+        transparent: true,
+        opacity: 1,
+      });
+    }
+  });
+}
+// GUI
+const params = {
+  "map opacity": 1,
+  opacity: 1,
+};
+gui.add(params, "map opacity", 0, 1, 0.01).onChange((value) => {
+  frame.material.opacity = value;
+});
+gui
+  .add(params, "opacity", 0, 1, 0.01)
+  .name("3D Buildings")
+  .onChange((value) => {
+    console.log("slider", value);
+
+    allModels.traverse((obj) => {
+      console.log(obj.type, obj.name);
+
+      if (obj instanceof THREE.Mesh) {
+        console.log("FOUND MESH");
+
+        const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+
+        materials.forEach((mat) => {
+          console.log(mat);
+          mat.transparent = true;
+          mat.opacity = value;
+          mat.needsUpdate = true;
+        });
+      }
+    });
+  });
 
 // Resize
 function onResize() {
