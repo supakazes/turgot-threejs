@@ -69,13 +69,14 @@ loader.load("./models/buildings/la-seine.glb", (gltf) => {
 // map frame
 const texture = new THREE.TextureLoader().load("./images/sheet_11.jpg");
 texture.colorSpace = THREE.SRGBColorSpace;
-const frame = new THREE.Mesh(
-  new THREE.PlaneGeometry(1823, 1723),
-  new THREE.MeshBasicMaterial({
-    map: texture,
-    side: THREE.DoubleSide,
-  }),
-);
+const frameMaterial = new THREE.MeshBasicMaterial({
+  map: texture,
+  side: THREE.DoubleSide,
+  transparent: true,
+  opacity: 1,
+});
+
+const frame = new THREE.Mesh(new THREE.PlaneGeometry(1823, 1723), frameMaterial);
 frame.rotation.x = -Math.PI / 2;
 frame.position.set(1.84, -1, -8.36);
 scene.add(frame);
