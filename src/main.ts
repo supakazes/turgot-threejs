@@ -13,27 +13,56 @@ const scene = new THREE.Scene();
 // Camera
 const aspect = window.innerWidth / window.innerHeight;
 const frustumSize = 1000;
+
 const camera = new THREE.OrthographicCamera(
-  (-frustumSize * aspect) / 2, // left
-  (frustumSize * aspect) / 2, // right
-  frustumSize / 2, // top
-  -frustumSize / 2, // bottom
-  0.1, // near
-  10000, // far
+  (-frustumSize * aspect) / 2,
+  (frustumSize * aspect) / 2,
+  frustumSize / 2,
+  -frustumSize / 2,
+  0.1,
+  10000,
 );
-camera.position.set(0, 500, 500);
-camera.lookAt(0, 0, 0);
+
+camera.position.set(0, 450, 500);
 
 // Renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
 renderer.setClearColor("#fdf6e1", 1);
-// renderer.outputColorSpace = THREE.SRGBColorSpace;
 app.appendChild(renderer.domElement);
 
 // Controls
 const controls = new OrbitControls(camera, renderer.domElement);
 
-// Ambien light
+// Pan by default
+controls.enablePan = true;
+controls.enableZoom = true;
+controls.enableRotate = false;
+
+controls.screenSpacePanning = true;
+controls.zoomSpeed = 1.2;
+controls.panSpeed = 1.2;
+
+// Zoom limits
+controls.minZoom = 0.2;
+controls.maxZoom = 20;
+
+// Initial target
+controls.target.set(0, 0, 0);
+controls.update();
+
+// Rotate only while Ctrl/Cmd is pressed
+window.addEventListener("keydown", (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    controls.enableRotate = true;
+  }
+});
+
+window.addEventListener("keyup", () => {
+  controls.enableRotate = false;
+});
+
+// Ambient light
 scene.add(new THREE.AmbientLight(0xffffff, 2));
 
 // Directional light
@@ -48,73 +77,80 @@ scene.add(new THREE.GridHelper(3000, 100));
 // GLB loader
 const loader = new GLTFLoader();
 
-const allModels = new THREE.Group();
-scene.add(allModels);
+// whole scene
+let model: THREE.Group;
+let frame: THREE.Object3D | undefined = undefined;
+let regularBuildings: THREE.Object3D[] = [];
 
-// regular buildings
-loader.load("./models/buildings/buildings.glb", (gltf) => {
-  allModels.add(gltf.scene);
+let specificBuildings: THREE.Object3D;
+let seine: THREE.Object3D;
+
+loader.load("./models/buildings/scene.glb", (gltf) => {
+  console.log("GLTF loaded:", gltf);
+
+  scene.add(gltf.scene);
+
+  // Objects
+  frame = gltf.scene.getObjectByName("planche-11-zone")!;
+  seine = gltf.scene.getObjectByName("la-seine")!;
+  specificBuildings = gltf.scene.getObjectByName("specific-buildings")!;
+
+  gltf.scene.traverse((obj) => {
+    console.log("Object:", obj.name);
+    if (obj.name.startsWith("all_shapes") || obj.name === "small") {
+      regularBuildings.push(obj);
+    }
+  });
+
+  if (frame) {
+    frame.position.y = -1;
+  }
 });
-
-// specific buildings
-loader.load("./models/buildings/specific-buildings.glb", (gltf) => {
-  allModels.add(gltf.scene);
-});
-
-// la seine
-loader.load("./models/buildings/la-seine.glb", (gltf) => {
-  allModels.add(gltf.scene);
-});
-
-// map frame
-const texture = new THREE.TextureLoader().load("./images/sheet_11.jpg");
-texture.colorSpace = THREE.SRGBColorSpace;
-const frameMaterial = new THREE.MeshBasicMaterial({
-  map: texture,
-  side: THREE.DoubleSide,
-  transparent: true,
-  opacity: 1,
-});
-
-const frame = new THREE.Mesh(new THREE.PlaneGeometry(1823, 1723), frameMaterial);
-frame.rotation.x = -Math.PI / 2;
-frame.position.set(1.84, -1, -8.36);
-scene.add(frame);
 
 // GUI
 const params = {
-  "map plane": 1,
-  visible: true,
+  showMap: true,
+  buildings: true,
 };
-gui.add(params, "map plane", 0, 1, 0.01).onChange((value) => {
-  frame.material.opacity = value;
-});
+
 gui
-  .add(params, "visible")
-  .name("3D Buildings")
-  .onChange((value) => {
-    allModels.visible = value;
+  .add(params, "showMap")
+  .name("Map")
+  .onChange((visible: boolean) => {
+    if (frame) {
+      frame.visible = visible;
+    }
+  });
+
+gui
+  .add(params, "buildings")
+  .name("Buildings")
+  .onChange((visible: boolean) => {
+    regularBuildings.forEach((obj) => {
+      obj.visible = visible;
+    });
+
+    specificBuildings.visible = visible;
+    seine.visible = visible;
   });
 
 // Resize
 function onResize() {
-  // Camera
   const width = app.clientWidth;
   const height = app.clientHeight;
   const aspect = width / height;
+
   camera.left = (-frustumSize * aspect) / 2;
   camera.right = (frustumSize * aspect) / 2;
   camera.top = frustumSize / 2;
   camera.bottom = -frustumSize / 2;
+
   camera.updateProjectionMatrix();
 
-  // Renderer
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(width, height);
 }
 
-// On Resize
 window.addEventListener("resize", onResize);
 onResize();
 
@@ -123,6 +159,8 @@ function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
+
   renderer.render(scene, camera);
 }
+
 animate();
