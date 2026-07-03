@@ -13,5 +13,10 @@ export const camera = new THREE.OrthographicCamera(
   10000,
 );
 
-camera.position.set(0, 450, 500);
+// Camera angle is a special calculation because of the usage of MapControls
+// We want 48° (same as the value found in Blender)
+const x = 450;
+const z = x / Math.tan(THREE.MathUtils.degToRad(48)); // ≈ 405
+camera.position.set(0, x, z);
+
 camera.zoom = 10;
