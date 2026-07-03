@@ -12,7 +12,7 @@ app.appendChild(renderer.domElement);
 
 // Controls
 const controls = new MapControls(camera, renderer.domElement); // behaves like a map
-controls.minZoom = 2; // Zoom limits
+controls.minZoom = 1; // Zoom limits
 controls.maxZoom = 20;
 controls.maxPolarAngle = Math.PI / 2; // Don't go below the ground:
 
