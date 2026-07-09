@@ -17,7 +17,7 @@ Goal: create a floor map with shapes of buildings containing meta data about hei
 - Import and position an image of the Turgot map, make the image invisible and create an outline effect to see the area covered (blue outline)
 - ESPG 3857 (same as OSM) to have a standard projection
 
-<img src="./screenshots/qgis-rotated-paris.png" width="700">
+<img src="./images/workflow/qgis-rotated-paris.png" width="700">
 
 ### Layer Verniquet
 
@@ -27,7 +27,7 @@ Import the rasters and apply an effect to make the white transparent. This way y
 
 `Layer properties -> transparency` and set **white** values to **transparent** with values in screenshot:
 
-<img src="./screenshots/qgis-layer-transparency.png" width="700">
+<img src="./images/workflow/qgis-layer-transparency.png" width="700">
 
 #### Batch apply transparency style on multiple rasters
 
@@ -37,26 +37,26 @@ To run the batch, you must go under `Vector > Batch vector layer saver`.
 
 See [https://verniquet.fr](https://verniquet.fr)
 
-<img src="./screenshots/qgis-verniquet.png" width="700">
+<img src="./images/workflow/qgis-verniquet.png" width="700">
 
 ### Layer with modern Paris
 
 Not mandatory but it can help you.
 Get the dataset **Emprises bâties et non baties** from [opendata.paris.fr](https://opendata.paris.fr/explore/dataset/emprise-batie-et-non-batie/map/?location=18,48.8615,2.34499&basemap=jawg.streets)
 
-<img src="./screenshots/qgis-modern-paris.png" width="700">
+<img src="./images/workflow/qgis-modern-paris.png" width="700">
 
 ### Vasserot emprise de la voierie (1810-1836)
 
 Can be useful, the precise [dataset from Vasserot (1810-1836)](https://alpage.huma-num.fr/donnees-sig/)
 
-<img src="./screenshots/qgis-vasserot.png" width="700">
+<img src="./images/workflow/qgis-vasserot.png" width="700">
 
 ### Position a Turgot sheet
 
 I recommend to position the full _assemblage_ of the 20 sheets first with a bad quality image to avoid performance issue and it will help position each sheet individually. Don't forget this map cheats about street widths and other things so don't try to be too accurate.
 
-<img src="./screenshots/qgis-turgot-sheet.png" width="700">
+<img src="./images/workflow/qgis-turgot-sheet.png" width="700">
 
 ## Draw shapes in QGIS
 
@@ -64,19 +64,19 @@ I recommend to position the full _assemblage_ of the 20 sheets first with a bad 
 
    Don't forget to save the shape file somewhere in your computer)
 
-   <img src="./screenshots/qgis-new-shapefile-layer.png" width="150">
+   <img src="./images/workflow/qgis-new-shapefile-layer.png" width="150">
 
 2. **Toggle editing**
 
-   <img src="./screenshots/qgis-toggle-editing-layer.png" width="150">
+   <img src="./images/workflow/qgis-toggle-editing-layer.png" width="150">
 
 3. **Add polygon**
 
-   <img src="./screenshots/qgis-add-polygon.png" width="150">
+   <img src="./images/workflow/qgis-add-polygon.png" width="150">
 
 4. **Add vertex on polygon**
 
-   <img src="./screenshots/qgis-vertex-tool.png" width="200">
+   <img src="./images/workflow/qgis-vertex-tool.png" width="200">
 
    Select `Vertex tool` and Hold `Shift` and double click on a line.
 
@@ -89,7 +89,7 @@ I recommend to position the full _assemblage_ of the 20 sheets first with a bad 
    When the feature is selected (yellow):
    `cmd + shit + A` to unselect it.
 
-   <img src="./screenshots/qgis-selected-feature.png" width="300">
+   <img src="./images/workflow/qgis-selected-feature.png" width="300">
 
 ## Add meta data to each shape
 
@@ -99,7 +99,7 @@ Enter `height` for example, as decimal type.
 
 Then, you can for each shape add a number for the height.Display the attributes (fields) table to edit each shape. Tip: clicking the row number on the left will highlight the feature you are editing.
 
-<img src="./screenshots/qgis-attribute-height.png" width="800">
+<img src="./images/workflow/qgis-attribute-height.png" width="800">
 
 ## Export shapes as .shp file
 
@@ -107,7 +107,7 @@ In QGIS, right click on the `shape layer > Export > Save features as...`
 
 Then chose a location for the file and select the attributes.
 
-<img src="./screenshots/qgis-export-shapefile.png" width="700">
+<img src="./images/workflow/qgis-export-shapefile.png" width="700">
 
 # Blender
 
@@ -117,7 +117,7 @@ In Blender, install [BlenderGIS](https://github.com/domlysz/blendergis).
 
 Then `GIS > Import > Shapefile (.shp)`
 
-<img src="./screenshots/blender-import-shapefile-dialog.png" width="400">
+<img src="./images/workflow/blender-import-shapefile-dialog.png" width="400">
 
 ## Copy shapes attributes into Blender's object data attributes
 
@@ -125,13 +125,13 @@ We can not read directly the shape attributes with Geometry nodes, we must first
 
 Check you can see QGIS shape attributes as **Custom Properties** in Blender.
 
-<img src="./screenshots/blender-custom-properties.png" width="700">
+<img src="./images/workflow/blender-custom-properties.png" width="700">
 
 Open Blender text editor, create a **new text** and paste the following code in it. Run it once (1) and a button will appear in the sidebar (shortcut `N`). Open the `Turgot` tab (2), then run the script by clicking `Sync SHP attributes` (3).
 
 You have copied the attributes in the Data section of each object (4). These can be read by Geometry nodes!
 
-<img src="./screenshots/blender-text-editor.png" width="700">
+<img src="./images/workflow/blender-text-editor.png" width="700">
 
 #### Script to be copied in the text editor:
 
@@ -208,7 +208,7 @@ Open the Geometry Node editor and create a new one.
 
 Set these Geomtry nodes on the unique object:
 
-<img src="./screenshots/blender-geometry-nodes-extrude.png" width="700">
+<img src="./images/workflow/blender-geometry-nodes-extrude.png" width="700">
 
 # Blender → GLB Export
 
