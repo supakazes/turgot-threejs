@@ -75,6 +75,7 @@ const params = {
   buildings: true,
 };
 
+// gui: show map floor
 gui
   .add(params, "showMap")
   .name("Map")
@@ -84,6 +85,7 @@ gui
     }
   });
 
+// gui: buildings layer
 gui
   .add(params, "buildings")
   .name("Buildings")
