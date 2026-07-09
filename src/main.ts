@@ -3,7 +3,7 @@ import { MapControls } from "three/addons/controls/MapControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GUI from "lil-gui";
 import { setupResize } from "./core/resize";
-import { camera, frustumSize, initializeCamera } from "./camera/camera";
+import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
 
 // app
@@ -51,29 +51,24 @@ const OBJECTS = {
   SMALL: "small",
 };
 
+// Place Dauphine
 loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) => {
   scene.add(gltf.scene);
   models.placeDauphine = gltf.scene.getObjectByName(OBJECTS.PLACE_DAUPHINE)!;
-  models.placeDauphine.visible = false;
 });
 
+// Frame (Turgot map image)
 loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
   scene.add(gltf.scene);
-
   models.frame = gltf.scene.getObjectByName(OBJECTS.FRAME)!;
-  models.frame.visible = true;
   models.frame.position.y = -1;
 });
 
+// Regular buildings
 loader.load("./models/buildings/scene.glb", (gltf) => {
   scene.add(gltf.scene);
-
-  // Objects
-  models.frame = gltf.scene.getObjectByName(OBJECTS.FRAME)!;
-
   gltf.scene.traverse((obj) => {
     if (obj.name.startsWith(OBJECTS.ALL_SHAPES) || obj.name === OBJECTS.SMALL) {
-      obj.visible = false;
       models.regularBuildings?.push(obj);
     }
   });
@@ -83,7 +78,7 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
 const gui = new GUI();
 const params = {
   showMap: true,
-  buildings: false,
+  buildings: true,
 };
 
 // gui: show map floor
@@ -110,21 +105,8 @@ gui
     }
   });
 
-// const cameraFolder = gui.addFolder("Camera");
-
-// cameraFolder.add(camera.position, "x").listen();
-// cameraFolder.add(camera.position, "y").listen();
-// cameraFolder.add(camera.position, "z").listen();
-// cameraFolder.add(camera, "zoom").listen();
-
-// const targetFolder = gui.addFolder("Target");
-
-// targetFolder.add(controls.target, "x").listen();
-// targetFolder.add(controls.target, "y").listen();
-// targetFolder.add(controls.target, "z").listen();
-
 // Resize
-setupResize(camera, renderer, app, frustumSize);
+setupResize(camera, renderer, app, FRUSTRUM_SIZE);
 
 // Render loop
 function animate() {
