@@ -3,7 +3,7 @@ import { MapControls } from "three/addons/controls/MapControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GUI from "lil-gui";
 import { setupResize } from "./core/resize";
-import { camera, frustumSize } from "./camera/camera";
+import { camera, frustumSize, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
 
 // app
@@ -15,6 +15,9 @@ const controls = new MapControls(camera, renderer.domElement); // behaves like a
 controls.minZoom = 1; // Zoom limits
 controls.maxZoom = 20;
 controls.maxPolarAngle = Math.PI / 2; // Don't go below the ground:
+
+// camera initialization
+initializeCamera(controls);
 
 // Scene
 const scene = new THREE.Scene();
@@ -55,10 +58,14 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
   // Objects
   models.frame = gltf.scene.getObjectByName(OBJECTS.FRAME)!;
   models.seine = gltf.scene.getObjectByName(OBJECTS.SEINE)!;
+  models.seine.visible = false;
+
   models.specificBuildings = gltf.scene.getObjectByName(OBJECTS.SPECIFIC_BUILDINGS)!;
+  models.specificBuildings.visible = false;
 
   gltf.scene.traverse((obj) => {
     if (obj.name.startsWith(OBJECTS.ALL_SHAPES) || obj.name === OBJECTS.SMALL) {
+      obj.visible = false;
       models.regularBuildings?.push(obj);
     }
   });
@@ -72,7 +79,7 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
 const gui = new GUI();
 const params = {
   showMap: true,
-  buildings: true,
+  buildings: false,
 };
 
 // gui: show map floor
@@ -101,6 +108,19 @@ gui
       models.seine.visible = visible;
     }
   });
+
+// const cameraFolder = gui.addFolder("Camera");
+
+// cameraFolder.add(camera.position, "x").listen();
+// cameraFolder.add(camera.position, "y").listen();
+// cameraFolder.add(camera.position, "z").listen();
+// cameraFolder.add(camera, "zoom").listen();
+
+// const targetFolder = gui.addFolder("Target");
+
+// targetFolder.add(controls.target, "x").listen();
+// targetFolder.add(controls.target, "y").listen();
+// targetFolder.add(controls.target, "z").listen();
 
 // Resize
 setupResize(camera, renderer, app, frustumSize);
