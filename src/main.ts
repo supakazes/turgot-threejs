@@ -3,8 +3,9 @@ import { MapControls } from "three/addons/controls/MapControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import GUI from "lil-gui";
 import { setupResize } from "./core/resize";
-import { camera, frustumSize } from "./camera/camera";
+import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
+import { replaceMaterial } from "./shaders/replaceMaterial";
 
 // app
 const app = document.getElementById("app")!;
@@ -15,6 +16,9 @@ const controls = new MapControls(camera, renderer.domElement); // behaves like a
 controls.minZoom = 1; // Zoom limits
 controls.maxZoom = 20;
 controls.maxPolarAngle = Math.PI / 2; // Don't go below the ground:
+
+// camera initialization
+initializeCamera(controls);
 
 // Scene
 const scene = new THREE.Scene();
@@ -38,34 +42,48 @@ const loader = new GLTFLoader();
 const models = {
   frame: undefined as THREE.Object3D | undefined,
   regularBuildings: [] as THREE.Object3D[],
-  specificBuildings: undefined as THREE.Object3D | undefined,
-  seine: undefined as THREE.Object3D | undefined,
+  placeDauphine: undefined as THREE.Object3D | undefined,
 };
 
 const OBJECTS = {
   ALL_SHAPES: "all_shapes",
   FRAME: "planche-11-zone",
-  SPECIFIC_BUILDINGS: "specific-buildings",
-  SEINE: "la-seine",
+  PLACE_DAUPHINE: "place_dauphine",
   SMALL: "small",
 };
+
+// Place Dauphine
+loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) => {
+  scene.add(gltf.scene);
+  models.placeDauphine = gltf.scene.getObjectByName(OBJECTS.PLACE_DAUPHINE)!;
+  console.log("models.placeDauphine", models.placeDauphine);
+
+  models.placeDauphine.traverse((obj) => {
+    if (!(obj instanceof THREE.Mesh)) return;
+
+    if (Array.isArray(obj.material)) {
+      obj.material = obj.material.map(replaceMaterial);
+    } else {
+      obj.material = replaceMaterial(obj.material);
+    }
+  });
+});
+
+// Frame (Turgot map image)
+loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
+  scene.add(gltf.scene);
+  models.frame = gltf.scene.getObjectByName(OBJECTS.FRAME)!;
+  models.frame.position.y = -1;
+});
+
+// Regular buildings
 loader.load("./models/buildings/scene.glb", (gltf) => {
   scene.add(gltf.scene);
-
-  // Objects
-  models.frame = gltf.scene.getObjectByName(OBJECTS.FRAME)!;
-  models.seine = gltf.scene.getObjectByName(OBJECTS.SEINE)!;
-  models.specificBuildings = gltf.scene.getObjectByName(OBJECTS.SPECIFIC_BUILDINGS)!;
-
   gltf.scene.traverse((obj) => {
     if (obj.name.startsWith(OBJECTS.ALL_SHAPES) || obj.name === OBJECTS.SMALL) {
       models.regularBuildings?.push(obj);
     }
   });
-
-  if (models.frame) {
-    models.frame.position.y = -1;
-  }
 });
 
 // GUI
@@ -75,6 +93,7 @@ const params = {
   buildings: true,
 };
 
+// gui: show map floor
 gui
   .add(params, "showMap")
   .name("Map")
@@ -84,6 +103,7 @@ gui
     }
   });
 
+// gui: buildings layer
 gui
   .add(params, "buildings")
   .name("Buildings")
@@ -92,16 +112,13 @@ gui
       obj.visible = visible;
     });
 
-    if (models.specificBuildings) {
-      models.specificBuildings.visible = visible;
-    }
-    if (models.seine) {
-      models.seine.visible = visible;
+    if (models.placeDauphine) {
+      models.placeDauphine.visible = visible;
     }
   });
 
 // Resize
-setupResize(camera, renderer, app, frustumSize);
+setupResize(camera, renderer, app, FRUSTRUM_SIZE);
 
 // Render loop
 function animate() {

@@ -1,22 +1,35 @@
 import * as THREE from "three";
+import { MapControls } from "three/addons/controls/MapControls.js";
 
-const frustumSize = 1000;
-
-export { frustumSize };
+export const FRUSTRUM_SIZE = 1000;
 
 export const camera = new THREE.OrthographicCamera(
-  -frustumSize / 2,
-  frustumSize / 2,
-  frustumSize / 2,
-  -frustumSize / 2,
+  -FRUSTRUM_SIZE / 2,
+  FRUSTRUM_SIZE / 2,
+  FRUSTRUM_SIZE / 2,
+  -FRUSTRUM_SIZE / 2,
   0.1,
   10000,
 );
 
-// Camera angle is a special calculation because of the usage of MapControls
-// We want 48° (same as the value found in Blender)
-const x = 450;
-const z = x / Math.tan(THREE.MathUtils.degToRad(48)); // ≈ 405
-camera.position.set(0, x, z);
+// Camera settings
+const CAMERA_ANGLE = 48; // degrees
+const CAMERA_HEIGHT = 450;
+const CAMERA_Z = CAMERA_HEIGHT / Math.tan(THREE.MathUtils.degToRad(CAMERA_ANGLE));
+const CAMERA_OFFSET = new THREE.Vector3(0, CAMERA_HEIGHT, CAMERA_Z);
 
-camera.zoom = 10;
+// place dauphine
+const INITIAL_TARGET = new THREE.Vector3(-483.5906495115238, 0, 316.484266094362);
+
+const INITIAL_ZOOM = 2;
+
+// initialization
+export function initializeCamera(controls: MapControls) {
+  controls.target.copy(INITIAL_TARGET);
+
+  camera.position.copy(INITIAL_TARGET).add(CAMERA_OFFSET);
+  camera.zoom = INITIAL_ZOOM;
+
+  camera.updateProjectionMatrix();
+  controls.update();
+}
