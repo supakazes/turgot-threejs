@@ -41,27 +41,35 @@ const loader = new GLTFLoader();
 const models = {
   frame: undefined as THREE.Object3D | undefined,
   regularBuildings: [] as THREE.Object3D[],
-  specificBuildings: undefined as THREE.Object3D | undefined,
-  seine: undefined as THREE.Object3D | undefined,
+  placeDauphine: undefined as THREE.Object3D | undefined,
 };
 
 const OBJECTS = {
   ALL_SHAPES: "all_shapes",
   FRAME: "planche-11-zone",
-  SPECIFIC_BUILDINGS: "specific-buildings",
-  SEINE: "la-seine",
+  PLACE_DAUPHINE: "place_dauphine",
   SMALL: "small",
 };
+
+loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) => {
+  scene.add(gltf.scene);
+  models.placeDauphine = gltf.scene.getObjectByName(OBJECTS.PLACE_DAUPHINE)!;
+  models.placeDauphine.visible = false;
+});
+
+loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
+  scene.add(gltf.scene);
+
+  models.frame = gltf.scene.getObjectByName(OBJECTS.FRAME)!;
+  models.frame.visible = true;
+  models.frame.position.y = -1;
+});
+
 loader.load("./models/buildings/scene.glb", (gltf) => {
   scene.add(gltf.scene);
 
   // Objects
   models.frame = gltf.scene.getObjectByName(OBJECTS.FRAME)!;
-  models.seine = gltf.scene.getObjectByName(OBJECTS.SEINE)!;
-  models.seine.visible = false;
-
-  models.specificBuildings = gltf.scene.getObjectByName(OBJECTS.SPECIFIC_BUILDINGS)!;
-  models.specificBuildings.visible = false;
 
   gltf.scene.traverse((obj) => {
     if (obj.name.startsWith(OBJECTS.ALL_SHAPES) || obj.name === OBJECTS.SMALL) {
@@ -69,10 +77,6 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
       models.regularBuildings?.push(obj);
     }
   });
-
-  if (models.frame) {
-    models.frame.position.y = -1;
-  }
 });
 
 // GUI
@@ -101,11 +105,8 @@ gui
       obj.visible = visible;
     });
 
-    if (models.specificBuildings) {
-      models.specificBuildings.visible = visible;
-    }
-    if (models.seine) {
-      models.seine.visible = visible;
+    if (models.placeDauphine) {
+      models.placeDauphine.visible = visible;
     }
   });
 
