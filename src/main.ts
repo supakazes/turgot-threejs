@@ -5,6 +5,7 @@ import GUI from "lil-gui";
 import { setupResize } from "./core/resize";
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
+import { replaceMaterial } from "./shaders/replaceMaterial";
 
 // app
 const app = document.getElementById("app")!;
@@ -55,6 +56,17 @@ const OBJECTS = {
 loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) => {
   scene.add(gltf.scene);
   models.placeDauphine = gltf.scene.getObjectByName(OBJECTS.PLACE_DAUPHINE)!;
+  console.log("models.placeDauphine", models.placeDauphine);
+
+  models.placeDauphine.traverse((obj) => {
+    if (!(obj instanceof THREE.Mesh)) return;
+
+    if (Array.isArray(obj.material)) {
+      obj.material = obj.material.map(replaceMaterial);
+    } else {
+      obj.material = replaceMaterial(obj.material);
+    }
+  });
 });
 
 // Frame (Turgot map image)
