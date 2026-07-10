@@ -5,7 +5,8 @@ import GUI from "lil-gui";
 import { setupResize } from "./core/resize";
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
-import { replaceMaterial } from "./shaders/replaceMaterial";
+import { applyPaperShader } from "./shaders/applyPaperShader";
+import * as paperRegistry from "./shaders/paper/registry";
 
 // app
 const app = document.getElementById("app")!;
@@ -22,8 +23,6 @@ initializeCamera(controls);
 
 // Scene
 const scene = new THREE.Scene();
-
-const shaderMaterials: THREE.ShaderMaterial[] = [];
 
 // Ambient light
 scene.add(new THREE.AmbientLight(0xffffff, 2));
@@ -59,29 +58,7 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
   scene.add(gltf.scene);
   models.placeDauphine = gltf.scene.getObjectByName(OBJECTS.PLACE_DAUPHINE)!;
 
-  models.placeDauphine.traverse((obj) => {
-    if (!(obj instanceof THREE.Mesh)) return;
-
-    if (Array.isArray(obj.material)) {
-      obj.material = obj.material.map((material) => {
-        const newMaterial = replaceMaterial(material);
-
-        if (newMaterial instanceof THREE.ShaderMaterial) {
-          shaderMaterials.push(newMaterial);
-        }
-
-        return newMaterial;
-      });
-    } else {
-      const newMaterial = replaceMaterial(obj.material);
-
-      if (newMaterial instanceof THREE.ShaderMaterial) {
-        shaderMaterials.push(newMaterial);
-      }
-
-      obj.material = newMaterial;
-    }
-  });
+  applyPaperShader(models.placeDauphine);
 });
 
 // Frame (Turgot map image)
@@ -97,6 +74,7 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
   gltf.scene.traverse((obj) => {
     if (obj.name.startsWith(OBJECTS.ALL_SHAPES) || obj.name === OBJECTS.SMALL) {
       models.regularBuildings?.push(obj);
+      applyPaperShader(obj);
     }
   });
 });
@@ -141,12 +119,7 @@ function animate() {
 
   controls.update();
 
-  const paperMatrix = camera.matrixWorldInverse.clone();
-  paperMatrix.setPosition(0, 0, 0);
-
-  for (const material of shaderMaterials) {
-    material.uniforms.uPaperMatrix.value.copy(paperMatrix);
-  }
+  paperRegistry.update(camera);
 
   renderer.render(scene, camera);
 }
