@@ -1,10 +1,17 @@
-precision highp float;
-varying vec2 vUv;
+varying vec3 vWorldPosition;
 
-void main(){
+uniform float uPaperScale;
+uniform mat4 uPaperMatrix;
 
-    vec3 paper = vec3(0.96);
+vec3 paperColor(vec2 uv);
 
-    gl_FragColor = vec4(paper,1.0);
+void main()
+{
+    vec3 paperPos = (uPaperMatrix * vec4(vWorldPosition, 1.0)).xyz;
 
+    vec2 uv = paperPos.xy * uPaperScale;
+
+    vec3 color = paperColor(uv);
+
+    gl_FragColor = vec4(color, 1.0);
 }

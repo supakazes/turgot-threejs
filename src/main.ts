@@ -23,6 +23,8 @@ initializeCamera(controls);
 // Scene
 const scene = new THREE.Scene();
 
+const shaderMaterials: THREE.ShaderMaterial[] = [];
+
 // Ambient light
 scene.add(new THREE.AmbientLight(0xffffff, 2));
 
@@ -56,15 +58,28 @@ const OBJECTS = {
 loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) => {
   scene.add(gltf.scene);
   models.placeDauphine = gltf.scene.getObjectByName(OBJECTS.PLACE_DAUPHINE)!;
-  console.log("models.placeDauphine", models.placeDauphine);
 
   models.placeDauphine.traverse((obj) => {
     if (!(obj instanceof THREE.Mesh)) return;
 
     if (Array.isArray(obj.material)) {
-      obj.material = obj.material.map(replaceMaterial);
+      obj.material = obj.material.map((material) => {
+        const newMaterial = replaceMaterial(material);
+
+        if (newMaterial instanceof THREE.ShaderMaterial) {
+          shaderMaterials.push(newMaterial);
+        }
+
+        return newMaterial;
+      });
     } else {
-      obj.material = replaceMaterial(obj.material);
+      const newMaterial = replaceMaterial(obj.material);
+
+      if (newMaterial instanceof THREE.ShaderMaterial) {
+        shaderMaterials.push(newMaterial);
+      }
+
+      obj.material = newMaterial;
     }
   });
 });
@@ -123,8 +138,16 @@ setupResize(camera, renderer, app, FRUSTRUM_SIZE);
 // Render loop
 function animate() {
   requestAnimationFrame(animate);
+
   controls.update();
+
+  const paperMatrix = camera.matrixWorldInverse.clone();
+  paperMatrix.setPosition(0, 0, 0);
+
+  for (const material of shaderMaterials) {
+    material.uniforms.uPaperMatrix.value.copy(paperMatrix);
+  }
+
   renderer.render(scene, camera);
 }
-
 animate();
