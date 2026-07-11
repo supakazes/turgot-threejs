@@ -7,6 +7,7 @@ import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
 import { applyPaperShader } from "./shaders/applyPaperShader";
 import * as paperRegistry from "./shaders/paper/registry";
+import { paperUniforms } from "./shaders/paper/paperUniforms";
 
 // app
 const app = document.getElementById("app")!;
@@ -109,6 +110,27 @@ gui
       models.placeDauphine.visible = visible;
     }
   });
+
+// gui: paper fine-tuning
+const paperFolder = gui.addFolder("Paper");
+
+const paperColor = {
+  base: `#${paperUniforms.uPaperBaseColor.value.getHexString()}`,
+};
+paperFolder
+  .addColor(paperColor, "base")
+  .name("Base color")
+  .onChange((hex: string) => paperUniforms.uPaperBaseColor.value.set(hex));
+
+paperFolder.add(paperUniforms.uStain1Scale, "value", 0.5, 20).name("Stain 1 scale");
+paperFolder.add(paperUniforms.uStain1Strength, "value", 0, 0.3).name("Stain 1 strength");
+paperFolder.add(paperUniforms.uStain2Scale, "value", 1, 40).name("Stain 2 scale");
+paperFolder.add(paperUniforms.uStain2Strength, "value", 0, 0.1).name("Stain 2 strength");
+paperFolder.add(paperUniforms.uGrainScale, "value", 100, 1000).name("Grain scale");
+paperFolder.add(paperUniforms.uGrainStrength, "value", 0, 0.05).name("Grain strength");
+paperFolder.add(paperUniforms.uSpeckScale, "value", 100, 1000).name("Speck scale");
+paperFolder.add(paperUniforms.uSpeckDensity, "value", 0, 0.02).name("Speck density");
+paperFolder.add(paperUniforms.uSpeckStrength, "value", 0, 0.4).name("Speck strength");
 
 // Resize
 setupResize(camera, renderer, app, FRUSTRUM_SIZE);

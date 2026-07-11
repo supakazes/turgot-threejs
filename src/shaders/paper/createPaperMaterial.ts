@@ -3,6 +3,7 @@ import * as THREE from "three";
 import vertexShader from "./paper.vert?raw";
 import paper from "./paper.glsl?raw";
 import paperBase from "./paperBase.frag?raw";
+import { paperUniforms } from "./paperUniforms";
 
 const PAPER_SCALE = 0.08;
 
@@ -24,6 +25,9 @@ export function createPaperMaterial(surfaceShader: string): THREE.ShaderMaterial
       uPaperMatrix: {
         value: new THREE.Matrix4(),
       },
+
+      // Shared paper-appearance uniforms (same objects across all materials).
+      ...paperUniforms,
     },
   });
 }
