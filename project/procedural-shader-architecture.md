@@ -52,6 +52,8 @@ Paper is common to every material.
 
 # Paper Projection
 
+<img src="./images/shaders/paper-example.png" width="700">
+
 The paper is generated procedurally by `paper.glsl`.
 
 It is **not** mapped using mesh UVs.
@@ -166,6 +168,8 @@ fakeLightDirection
 ---
 
 # Visual Style
+
+<img src="./images/shaders/place-dauphine.png" width="700">
 
 Small procedural imperfections preserve the engraved appearance:
 
