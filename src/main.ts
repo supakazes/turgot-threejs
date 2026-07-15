@@ -129,7 +129,7 @@ paperFolder.add(paperUniforms.uStain2Strength, "value", 0, 0.5).name("Stain 2 st
 paperFolder.add(paperUniforms.uWarpStrength, "value", 0, 1.5).name("Warp strength");
 paperFolder.add(paperUniforms.uGrainScale, "value", 100, 1000).name("Grain scale");
 paperFolder.add(paperUniforms.uGrainStrength, "value", 0, 0.05).name("Grain strength");
-paperFolder.add(paperUniforms.uSpeckScale, "value", 40, 500).name("Speck scale");
+paperFolder.add(paperUniforms.uSpeckScale, "value", 0, 10).name("Speck scale");
 paperFolder.add(paperUniforms.uSpeckDensity, "value", 0, 1).name("Speck density");
 paperFolder.add(paperUniforms.uSpeckSize, "value", 0.02, 0.4).name("Speck size");
 paperFolder.add(paperUniforms.uSpeckStrength, "value", 0, 1).name("Speck strength");

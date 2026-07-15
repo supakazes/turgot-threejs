@@ -1,10 +1,13 @@
-// Pseudo-random value in [0,1] from a 2D point. Same input always gives the
-// same output, so the paper looks identical every frame.
+// Pseudo-random value in [0,1] from a 2D point (Dave Hoskins' hash). It scales
+// the input DOWN first (*0.1031), so it stays precise even at the large
+// coordinates our world-projected paper UVs reach at high frequencies. The old
+// scale-up hash lost all precision past ~uv*100, which is why grain/specks
+// looked dead.
 float hash(vec2 p)
 {
-    p = fract(p * vec2(234.34, 435.345));
-    p += dot(p, p + 34.23);
-    return fract(p.x * p.y);
+    vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
 }
 
 // Smooth value noise: hash the 4 grid corners around p and blend between them.
