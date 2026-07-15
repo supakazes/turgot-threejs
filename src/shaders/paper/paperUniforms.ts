@@ -4,20 +4,24 @@ import * as THREE from "three";
 // uniform objects, so changing a value (e.g. from lil-gui) updates the paper
 // look across the whole scene at once.
 export const paperUniforms = {
-  uPaperBaseColor: { value: new THREE.Color(255 / 255, 252 / 255, 235 / 255) },
-  uStain1Scale: { value: 7.7 },
-  uStain1Strength: { value: 0.1 },
+  uPaperBaseColor: { value: new THREE.Color("#fffef6") },
+  uStain1Scale: { value: 8.1635 },
+  uStain1Strength: { value: 0.1401 },
 
   uStain2Scale: { value: 1.9 },
   uStain2Strength: { value: 0.04 },
 
-  uWarpStrength: { value: 0.4 },
+  uWarpStrength: { value: 0.294 },
 
-  uGrainScale: { value: 500.0 },
-  uGrainStrength: { value: 0.01 },
+  // Big foxing specks
+  uSpeck1Scale: { value: 2.94 },
+  uSpeck1Density: { value: 0.565 },
+  uSpeck1Size: { value: 0.08992 },
+  uSpeck1Strength: { value: 0.553 },
 
-  uSpeckScale: { value: 4.0 },
-  uSpeckDensity: { value: 0.35 },
-  uSpeckSize: { value: 0.12 },
-  uSpeckStrength: { value: 0.5 },
+  // Small foxing specks
+  uSpeck2Scale: { value: 1.22 },
+  uSpeck2Density: { value: 0.38 },
+  uSpeck2Size: { value: 0.08042 },
+  uSpeck2Strength: { value: 0.245 },
 };

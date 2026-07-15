@@ -67,29 +67,36 @@ uniform float uStain1Strength;   // big blotches: intensity
 uniform float uStain2Scale;      // medium mottle: frequency
 uniform float uStain2Strength;   // medium mottle: intensity
 uniform float uWarpStrength;     // domain warp: how much to distort the stains
-uniform float uGrainScale;       // fine fiber grain: frequency
-uniform float uGrainStrength;    // fine fiber grain: intensity
-uniform float uSpeckScale;       // foxing specks: frequency (higher = smaller/denser)
-uniform float uSpeckDensity;     // foxing specks: fraction of cells that get a dot
-uniform float uSpeckSize;        // foxing specks: dot radius within its cell
-uniform float uSpeckStrength;    // foxing specks: how dark
+
+// Big foxing specks
+uniform float uSpeck1Scale;      // frequency (higher = smaller/denser)
+uniform float uSpeck1Density;    // fraction of cells that get a dot
+uniform float uSpeck1Size;       // dot radius within its cell
+uniform float uSpeck1Strength;   // how dark
+
+// Small foxing specks
+uniform float uSpeck2Scale;
+uniform float uSpeck2Density;
+uniform float uSpeck2Size;
+uniform float uSpeck2Strength;
 
 // Sparse round foxing dots. Space is a grid; each cell may hold one dot at a
 // jittered position. A dot only appears if the cell passes the density test,
 // then a radial falloff makes it round (not a square) and per-dot randomness
-// varies its darkness. Higher uSpeckScale => smaller, denser dots.
-float specks(vec2 uv)
+// varies its darkness. Higher scale => smaller, denser dots. The seed offsets
+// the hashes so two speck layers don't land on the exact same positions.
+float specks(vec2 uv, float scale, float density, float size, float seed)
 {
-    vec2 cell = floor(uv * uSpeckScale);
-    vec2 f = fract(uv * uSpeckScale);
+    vec2 cell = floor(uv * scale) + seed;
+    vec2 f = fract(uv * scale);
 
     // Does this cell contain a dot at all?
-    if (hash(cell + 3.7) > uSpeckDensity) return 0.0;
+    if (hash(cell + 3.7) > density) return 0.0;
 
     // Jittered dot centre inside the cell, then round radial falloff.
     vec2 center = 0.2 + 0.6 * hash2(cell);
     float d = distance(f, center);
-    float dot = 1.0 - smoothstep(0.0, uSpeckSize, d);
+    float dot = 1.0 - smoothstep(0.0, size, d);
 
     // Vary darkness per dot so they don't all read as identical.
     float darkness = 0.5 + 0.5 * hash(cell + 9.1);
@@ -119,13 +126,9 @@ vec3 paperColor(vec2 uv)
     float stain2 = fbm(wuv * uStain2Scale);
     color += (stain2 - 0.5) * uStain2Strength;
 
-    // 5. Fine paper grain. Raw hash (not smoothed) at high frequency = crisp
-    //    per-cell speckle, like the tooth of the paper fibers.
-    float grain = hash(floor(uv * uGrainScale));
-    color += (grain - 0.5) * uGrainStrength;
-
-    // 6. Foxing specks: small round dark dots scattered across the sheet.
-    color -= specks(uv) * uSpeckStrength;
+    // 5. Foxing specks: two layers of round dark dots, big and small.
+    color -= specks(uv, uSpeck1Scale, uSpeck1Density, uSpeck1Size, 0.0) * uSpeck1Strength;
+    color -= specks(uv, uSpeck2Scale, uSpeck2Density, uSpeck2Size, 41.0) * uSpeck2Strength;
 
     return color;
 }

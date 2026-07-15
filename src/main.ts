@@ -127,12 +127,16 @@ paperFolder.add(paperUniforms.uStain1Strength, "value", 0, 0.3).name("Stain 1 st
 paperFolder.add(paperUniforms.uStain2Scale, "value", 1, 40).name("Stain 2 scale");
 paperFolder.add(paperUniforms.uStain2Strength, "value", 0, 0.5).name("Stain 2 strength");
 paperFolder.add(paperUniforms.uWarpStrength, "value", 0, 1.5).name("Warp strength");
-paperFolder.add(paperUniforms.uGrainScale, "value", 100, 1000).name("Grain scale");
-paperFolder.add(paperUniforms.uGrainStrength, "value", 0, 0.05).name("Grain strength");
-paperFolder.add(paperUniforms.uSpeckScale, "value", 0, 10).name("Speck scale");
-paperFolder.add(paperUniforms.uSpeckDensity, "value", 0, 1).name("Speck density");
-paperFolder.add(paperUniforms.uSpeckSize, "value", 0.02, 0.4).name("Speck size");
-paperFolder.add(paperUniforms.uSpeckStrength, "value", 0, 1).name("Speck strength");
+
+paperFolder.add(paperUniforms.uSpeck1Scale, "value", 0, 10).name("Speck 1 scale");
+paperFolder.add(paperUniforms.uSpeck1Density, "value", 0, 1).name("Speck 1 density");
+paperFolder.add(paperUniforms.uSpeck1Size, "value", 0.02, 0.4).name("Speck 1 size");
+paperFolder.add(paperUniforms.uSpeck1Strength, "value", 0, 1).name("Speck 1 strength");
+
+paperFolder.add(paperUniforms.uSpeck2Scale, "value", 0, 20).name("Speck 2 scale");
+paperFolder.add(paperUniforms.uSpeck2Density, "value", 0, 1).name("Speck 2 density");
+paperFolder.add(paperUniforms.uSpeck2Size, "value", 0.02, 0.4).name("Speck 2 size");
+paperFolder.add(paperUniforms.uSpeck2Strength, "value", 0, 1).name("Speck 2 strength");
 
 // Resize
 setupResize(camera, renderer, app, FRUSTRUM_SIZE);
