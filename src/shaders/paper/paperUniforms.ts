@@ -3,6 +3,7 @@ import * as THREE from "three";
 // Shared paper-appearance uniforms. Every paper material references these same
 // uniform objects, so changing a value (e.g. from lil-gui) updates the paper
 // look across the whole scene at once.
+// foxing : discoloration of the paper of old books or prints with brown spots.
 export const paperUniforms = {
   uPaperBaseColor: { value: new THREE.Color("#fffef6") },
   uStain1Scale: { value: 8.1635 },

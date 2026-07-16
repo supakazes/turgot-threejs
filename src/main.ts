@@ -8,6 +8,7 @@ import { renderer } from "./renderer/renderer";
 import { applyPaperShader } from "./shaders/applyPaperShader";
 import * as paperRegistry from "./shaders/paper/registry";
 import { paperUniforms } from "./shaders/paper/paperUniforms";
+import { facadeUniforms } from "./shaders/facade/facadeUniforms";
 
 // app
 const app = document.getElementById("app")!;
@@ -137,6 +138,24 @@ paperFolder.add(paperUniforms.uSpeck2Scale, "value", 0, 20).name("Speck 2 scale"
 paperFolder.add(paperUniforms.uSpeck2Density, "value", 0, 1).name("Speck 2 density");
 paperFolder.add(paperUniforms.uSpeck2Size, "value", 0.02, 0.4).name("Speck 2 size");
 paperFolder.add(paperUniforms.uSpeck2Strength, "value", 0, 1).name("Speck 2 strength");
+
+// gui: facade windows
+const facadeFolder = gui.addFolder("Facade");
+
+facadeFolder.add(facadeUniforms.uWindowPitch, "value", 1, 12).name("Window pitch (m)");
+facadeFolder.add(facadeUniforms.uFloorHeight, "value", 1, 8).name("Floor height (m)");
+facadeFolder.add(facadeUniforms.uWindowSize.value, "x", 0.1, 1).name("Window width");
+facadeFolder.add(facadeUniforms.uWindowSize.value, "y", 0.1, 1).name("Window height");
+facadeFolder.add(facadeUniforms.uGroundHeight, "value", 0, 20).name("Ground height (m)");
+facadeFolder.add(facadeUniforms.uFloorCount, "value", 1, 10, 1).name("Floor count");
+
+const facadeColor = {
+  ink: `#${facadeUniforms.uInkColor.value.getHexString()}`,
+};
+facadeFolder
+  .addColor(facadeColor, "ink")
+  .name("Ink color")
+  .onChange((hex: string) => facadeUniforms.uInkColor.value.set(hex));
 
 // Resize
 setupResize(camera, renderer, app, FRUSTRUM_SIZE);
