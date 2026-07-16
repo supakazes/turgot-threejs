@@ -5,7 +5,9 @@ import GUI from "lil-gui";
 import { setupResize } from "./core/resize";
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
-import { replaceMaterial } from "./shaders/replaceMaterial";
+import { applyPaperShader } from "./shaders/applyPaperShader";
+import * as paperRegistry from "./shaders/paper/registry";
+import { paperUniforms } from "./shaders/paper/paperUniforms";
 
 // app
 const app = document.getElementById("app")!;
@@ -56,17 +58,8 @@ const OBJECTS = {
 loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) => {
   scene.add(gltf.scene);
   models.placeDauphine = gltf.scene.getObjectByName(OBJECTS.PLACE_DAUPHINE)!;
-  console.log("models.placeDauphine", models.placeDauphine);
 
-  models.placeDauphine.traverse((obj) => {
-    if (!(obj instanceof THREE.Mesh)) return;
-
-    if (Array.isArray(obj.material)) {
-      obj.material = obj.material.map(replaceMaterial);
-    } else {
-      obj.material = replaceMaterial(obj.material);
-    }
-  });
+  applyPaperShader(models.placeDauphine);
 });
 
 // Frame (Turgot map image)
@@ -82,6 +75,7 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
   gltf.scene.traverse((obj) => {
     if (obj.name.startsWith(OBJECTS.ALL_SHAPES) || obj.name === OBJECTS.SMALL) {
       models.regularBuildings?.push(obj);
+      applyPaperShader(obj);
     }
   });
 });
@@ -117,14 +111,44 @@ gui
     }
   });
 
+// gui: paper fine-tuning
+const paperFolder = gui.addFolder("Paper");
+
+const paperColor = {
+  base: `#${paperUniforms.uPaperBaseColor.value.getHexString()}`,
+};
+paperFolder
+  .addColor(paperColor, "base")
+  .name("Base color")
+  .onChange((hex: string) => paperUniforms.uPaperBaseColor.value.set(hex));
+
+paperFolder.add(paperUniforms.uStain1Scale, "value", 0.5, 20).name("Stain 1 scale");
+paperFolder.add(paperUniforms.uStain1Strength, "value", 0, 0.3).name("Stain 1 strength");
+paperFolder.add(paperUniforms.uStain2Scale, "value", 1, 40).name("Stain 2 scale");
+paperFolder.add(paperUniforms.uStain2Strength, "value", 0, 0.5).name("Stain 2 strength");
+paperFolder.add(paperUniforms.uWarpStrength, "value", 0, 1.5).name("Warp strength");
+
+paperFolder.add(paperUniforms.uSpeck1Scale, "value", 0, 10).name("Speck 1 scale");
+paperFolder.add(paperUniforms.uSpeck1Density, "value", 0, 1).name("Speck 1 density");
+paperFolder.add(paperUniforms.uSpeck1Size, "value", 0.02, 0.4).name("Speck 1 size");
+paperFolder.add(paperUniforms.uSpeck1Strength, "value", 0, 1).name("Speck 1 strength");
+
+paperFolder.add(paperUniforms.uSpeck2Scale, "value", 0, 20).name("Speck 2 scale");
+paperFolder.add(paperUniforms.uSpeck2Density, "value", 0, 1).name("Speck 2 density");
+paperFolder.add(paperUniforms.uSpeck2Size, "value", 0.02, 0.4).name("Speck 2 size");
+paperFolder.add(paperUniforms.uSpeck2Strength, "value", 0, 1).name("Speck 2 strength");
+
 // Resize
 setupResize(camera, renderer, app, FRUSTRUM_SIZE);
 
 // Render loop
 function animate() {
   requestAnimationFrame(animate);
+
   controls.update();
+
+  paperRegistry.update(camera);
+
   renderer.render(scene, camera);
 }
-
 animate();

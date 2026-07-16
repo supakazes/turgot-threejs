@@ -1,10 +1,6 @@
-precision highp float;
-varying vec2 vUv;
-
-void main(){
-
-    vec3 paper = vec3(0.96);
-
-    gl_FragColor = vec4(paper,1.0);
-
+// Facade surface layers, stacked on top of the shared paper base.
+// TODO: add walls, windows, vertical hatching lines, etc.
+vec3 surfaceLayers(vec3 base, vec2 uv)
+{
+    return base;
 }

@@ -10,48 +10,75 @@ Objectives:
 
 - preserve the engraving style of the Plan Turgot
 - minimize download size
-- keep complete artistic control
-- produce infinitely sharp rendering
-- build a reusable procedural material library
+- procedural, infinitely sharp rendering
+- reusable shader library
+- complete artistic control
 
-The renderer should reproduce the **rules** of the engraving, not copy it pixel by pixel.
+The renderer should reproduce the **rules** of the engraving rather than copy pixels.
 
 ---
 
 # Design Principles
 
-- simple procedural shaders
+- geometry comes from Blender
+- shaders decorate geometry
 - no PBR
 - no baked textures
 - no texture atlases
-- geometry comes from Blender
-- shaders decorate geometry
+
+The city is rendered as if engraved on a **single sheet of paper**.
 
 ---
 
 # Rendering Pipeline
 
-Each surface is rendered in successive passes.
+Every procedural material follows the same structure:
 
 ```
-Wall
+Paper
 ↓
-Roof hatching
+Surface
 ↓
-Windows
+Architectural details
 ↓
-Doors
+Hatching
 ↓
-Ink imperfections
+AO / Shadows
 ```
 
-Each stage modifies the current color.
+Paper is common to every material.
+
+---
+
+# Paper Projection
+
+<img src="./images/shaders/paper-example.png" width="700">
+
+The paper is generated procedurally by `paper.glsl`.
+
+It is **not** mapped using mesh UVs.
+
+Instead, every shader samples the paper using the same camera projection.
+
+```
+paperPosition = uPaperMatrix * worldPosition
+paperUV = paperPosition.xy
+```
+
+`uPaperMatrix` contains only the camera rotation.
+
+Result:
+
+- pan → paper follows the city
+- rotate → paper rotates with the camera
+- zoom → paper scales naturally
+- one continuous paper across the entire scene
 
 ---
 
 # Procedural Primitives
 
-Shaders are built from reusable drawing functions.
+Complex elements are built from simple reusable functions.
 
 Examples:
 
@@ -62,21 +89,9 @@ Examples:
 - hatch lines
 - paper grain
 
-Complex elements are compositions of simple primitives.
+Many can be implemented as Signed Distance Functions (SDF).
 
-Example:
-
-```
-Door
-
-rectangle
-+
-half circle
-```
-
-Many primitives can be implemented with Signed Distance Functions (SDF).
-
-Useful reference:
+Reference:
 
 https://iquilezles.org/articles/distfunctions/
 
@@ -84,9 +99,9 @@ https://iquilezles.org/articles/distfunctions/
 
 # Surface Types
 
-Shaders render **surface types**, not individual buildings.
+Shaders render surface types, not individual buildings.
 
-Typical surface types:
+Typical materials:
 
 - Facade
 - Roof
@@ -95,20 +110,15 @@ Typical surface types:
 - Water
 - Vegetation
 
-The same shader is reused across the entire project.
+Buildings provide geometry only.
 
-Buildings only provide geometry and parameters.
+Shaders generate the appearance.
 
 ---
 
 # Blender Pipeline
 
-Blender defines:
-
-- geometry
-- semantic surface types
-
-Each face is assigned a simple material such as:
+Blender materials are semantic tags.
 
 ```
 Facade
@@ -116,38 +126,35 @@ Roof
 Chimney
 ```
 
-These materials act as semantic tags.
+Their appearance is ignored.
 
-Their appearance is ignored by the renderer.
-
-In Three.js they are replaced by procedural shaders.
+Three.js replaces them with procedural shaders.
 
 ---
 
 # UV Strategy
 
-Automatic UVs should be sufficient.
+Mesh UVs are reserved for local architectural details:
 
-Walls:
+- windows
+- doors
+- roof tiles
+- ornaments
 
-```
-U = horizontal
-V = vertical
-```
-
-Roofs:
-
-Projected from above.
-
-All shaders work in normalized UV space (`0 → 1`), independently of the building size.
+Paper projection never depends on mesh UVs.
 
 ---
 
 # Parameters
 
-Shaders are driven by a small set of uniforms.
+Shared uniforms:
 
-Examples:
+```
+uPaperMatrix
+uPaperScale
+```
+
+Typical shader parameters:
 
 ```
 paperColor
@@ -156,60 +163,20 @@ buildingSeed
 fakeLightDirection
 ```
 
-A deterministic seed introduces subtle variations:
-
-- hatch spacing
-- line wobble
-- paper imperfections
-- ink density
-
-Buildings keep the same visual identity while avoiding repetition.
-
----
-
-# Building Styles
-
-Buildings are compositions of reusable primitives.
-
-Example:
-
-```
-Place Dauphine
-
-Facade
-+ repeated windows
-+ doors
-+ roof hatching
-```
-
-```
-Notre-Dame
-
-Facade
-+ gothic windows
-+ rose window
-+ buttresses
-+ roof hatching
-```
-
-The primitives remain the same.
-
-Only their composition changes.
+`buildingSeed` introduces deterministic variation while preserving visual consistency.
 
 ---
 
 # Visual Style
 
-The project uses an orthographic camera.
+<img src="./images/shaders/place-dauphine.png" width="700">
 
-Small procedural imperfections are essential:
+Small procedural imperfections preserve the engraved appearance:
 
-- slightly uneven lines
-- subtle wobble
+- line wobble
 - variable hatch density
 - paper grain
-
-These imperfections preserve the hand-drawn appearance.
+- ink defects
 
 ---
 
@@ -217,13 +184,13 @@ These imperfections preserve the hand-drawn appearance.
 
 The renderer should describe a visual language rather than reproduce every engraved line.
 
-A small library of procedural shaders should be able to render most Parisian buildings while remaining lightweight, maintainable and stylistically consistent.
+Geometry defines the forms.
+
+Shaders generate the engraving.
 
 ---
 
 # Renderer Vocabulary
-
-Blender materials are semantic tags.
 
 | Blender    | Three.js                |
 | ---------- | ----------------------- |
@@ -233,4 +200,6 @@ Blender materials are semantic tags.
 | Water      | WaterShader             |
 | Vegetation | VegetationShader        |
 
-Blender materials do not define appearance. They identify the type of surface so the renderer can assign the appropriate procedural shader.
+Blender materials identify surface types.
+
+Procedural shaders generate their appearance.
