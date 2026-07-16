@@ -6,6 +6,7 @@ import { setupResize } from "./core/resize";
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
 import { applyPaperShader } from "./shaders/applyPaperShader";
+import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { paperUniforms } from "./shaders/paper/paperUniforms";
 import { facadeUniforms } from "./shaders/facade/facadeUniforms";
@@ -61,6 +62,8 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
   models.placeDauphine = gltf.scene.getObjectByName(OBJECTS.PLACE_DAUPHINE)!;
 
   applyPaperShader(models.placeDauphine);
+  addEdges(models.placeDauphine);
+  setEdgesVisible(params.showEdges);
 });
 
 // Frame (Turgot map image)
@@ -77,8 +80,10 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
     if (obj.name.startsWith(OBJECTS.ALL_SHAPES) || obj.name === OBJECTS.SMALL) {
       models.regularBuildings?.push(obj);
       applyPaperShader(obj);
+      addEdges(obj);
     }
   });
+  setEdgesVisible(params.showEdges);
 });
 
 // GUI
@@ -86,6 +91,7 @@ const gui = new GUI();
 const params = {
   showMap: true,
   buildings: true,
+  showEdges: true,
 };
 
 // gui: show map floor
@@ -111,6 +117,12 @@ gui
       models.placeDauphine.visible = visible;
     }
   });
+
+// gui: edge overlay
+gui
+  .add(params, "showEdges")
+  .name("Edges")
+  .onChange((visible: boolean) => setEdgesVisible(visible));
 
 // gui: paper fine-tuning
 const paperFolder = gui.addFolder("Paper");
