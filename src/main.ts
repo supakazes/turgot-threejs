@@ -9,6 +9,8 @@ import { applyPaperShader } from "./shaders/applyPaperShader";
 import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { paperUniforms } from "./shaders/paper/paperUniforms";
+import { imperfectionUniforms } from "./shaders/paper/imperfectionUniforms";
+import { distortionUniforms } from "./shaders/paper/distortionUniforms";
 import {
   facadeUniforms,
   placeDauphineDoorUniforms,
@@ -155,6 +157,35 @@ paperFolder.add(paperUniforms.uSpeck2Scale, "value", 0, 20).name("Speck 2 scale"
 paperFolder.add(paperUniforms.uSpeck2Density, "value", 0, 1).name("Speck 2 density");
 paperFolder.add(paperUniforms.uSpeck2Size, "value", 0.02, 0.4).name("Speck 2 size");
 paperFolder.add(paperUniforms.uSpeck2Strength, "value", 0, 1).name("Speck 2 strength");
+
+// gui: imperfections (shared post-shape pass, applied to every facade/roof)
+const imperfectionsFolder = gui.addFolder("Imperfections");
+
+imperfectionsFolder
+  .add(imperfectionUniforms.uInkBreakupScale, "value", 0.5, 40)
+  .name("Breakup scale");
+imperfectionsFolder
+  .add(imperfectionUniforms.uInkBreakupStrength, "value", 0, 1)
+  .name("Breakup strength");
+imperfectionsFolder
+  .add(imperfectionUniforms.uInkTransparency, "value", 0, 1)
+  .name("Ink transparency");
+imperfectionsFolder
+  .add(imperfectionUniforms.uPaperGrainScale, "value", 1, 120)
+  .name("Grain scale");
+imperfectionsFolder
+  .add(imperfectionUniforms.uPaperGrainStrength, "value", 0, 0.3)
+  .name("Grain strength");
+
+// gui: shape distortion (pre-shape coordinate warp; wavy outlines)
+const distortionFolder = gui.addFolder("Distortion");
+
+distortionFolder
+  .add(distortionUniforms.uDistortStrength, "value", 0, 1)
+  .name("Strength (m)");
+distortionFolder
+  .add(distortionUniforms.uDistortScale, "value", 0.2, 20)
+  .name("Scale");
 
 // gui: facade windows
 const facadeFolder = gui.addFolder("Facade");

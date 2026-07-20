@@ -12,7 +12,9 @@ uniform float uFloorCount;   // number of window rows to draw
 uniform vec3  uInkColor;
 
 // sdBox / sdCircle come from sdf.glsl; the door layer from placeDauphineDoor.glsl
-// (both prepended in facadeMaterial.ts).
+// (both prepended in facadeMaterial.ts). warpShape() comes from distortion.glsl
+// (prepended by createPaperMaterial).
+vec2 warpShape(vec2 p);
 
 vec3 surfaceLayers(vec3 base, vec2 uv, vec2 wallUV, vec2 wallSize, vec2 metric, bool hasWallData)
 {
@@ -28,6 +30,13 @@ vec3 surfaceLayers(vec3 base, vec2 uv, vec2 wallUV, vec2 wallSize, vec2 metric, 
         along = metric.x;
         height = metric.y;
     }
+
+    // Warp the shape coordinate once, up front, so every edge drawn from it
+    // (doors, floor lines, windows) comes out hand-drawn wavy instead of ruler
+    // straight. Disabled when uDistortStrength is 0.
+    vec2 warped = warpShape(vec2(along, height));
+    along = warped.x;
+    height = warped.y;
 
     // Ground zone: the Place Dauphine door arcade lives below the first row.
     vec3 col = placeDauphineDoors(base, along, height);

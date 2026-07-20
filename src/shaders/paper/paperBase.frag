@@ -21,6 +21,9 @@ vec3 paperColor(vec2 uv);
 // Returns the final color after stacking that surface's own layers.
 vec3 surfaceLayers(vec3 base, vec2 uv, vec2 wallUV, vec2 wallSize, vec2 metric, bool hasWallData);
 
+// Provided by imperfections.glsl: the shared post-shape ink/grain pass.
+vec3 applyImperfections(vec3 color, vec3 base, vec2 uv);
+
 void main()
 {
     vec3 paperPos = (uPaperMatrix * vec4(vWorldPosition, 1.0)).xyz;
@@ -32,6 +35,10 @@ void main()
     bool hasWallData = vWallSize.x > 0.0 && vWallSize.y > 0.0;
 
     vec3 color = surfaceLayers(base, uv, vWallUV, vWallSize, vFacadeMetric, hasWallData);
+
+    // Final shared pass: rough up the clean, geometric result so it reads as a
+    // hand-inked engraving rather than a vector drawing.
+    color = applyImperfections(color, base, uv);
 
     gl_FragColor = vec4(color, 1.0);
 }
