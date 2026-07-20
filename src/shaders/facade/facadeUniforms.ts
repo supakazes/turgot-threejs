@@ -25,3 +25,12 @@ export const placeDauphineDoorUniforms = {
   uDoorCutSide: { value: 1.0 }, // -1 left, +1 right
   uDoorInkColor: { value: new THREE.Color("#2b2117") },
 };
+
+// Double division line between floors (thin + thick band). Isolated for reuse.
+export const floorLineUniforms = {
+  uFloorLineOffset: { value: 0.0 }, // nudge the pair up/down from the boundary (m)
+  uFloorLineGap: { value: 0.4 }, // vertical gap between the thin and thick line (m)
+  uFloorLineThinThickness: { value: 0.1 }, // thin line thickness (m)
+  uFloorLineThickThickness: { value: 0.25 }, // thick line thickness (m)
+  uFloorLineInkColor: { value: new THREE.Color("#2b2117") },
+};

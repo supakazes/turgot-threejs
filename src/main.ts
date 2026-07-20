@@ -9,7 +9,11 @@ import { applyPaperShader } from "./shaders/applyPaperShader";
 import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { paperUniforms } from "./shaders/paper/paperUniforms";
-import { facadeUniforms, placeDauphineDoorUniforms } from "./shaders/facade/facadeUniforms";
+import {
+  facadeUniforms,
+  placeDauphineDoorUniforms,
+  floorLineUniforms,
+} from "./shaders/facade/facadeUniforms";
 
 // app
 const app = document.getElementById("app")!;
@@ -198,6 +202,28 @@ doorFolder
   .addColor(doorColor, "ink")
   .name("Ink color")
   .onChange((hex: string) => placeDauphineDoorUniforms.uDoorInkColor.value.set(hex));
+
+// gui: floor division lines (double band between floors)
+const floorLineFolder = gui.addFolder("Floor lines");
+
+floorLineFolder
+  .add(floorLineUniforms.uFloorLineOffset, "value", -4, 4)
+  .name("Offset (m)");
+floorLineFolder.add(floorLineUniforms.uFloorLineGap, "value", 0, 2).name("Gap (m)");
+floorLineFolder
+  .add(floorLineUniforms.uFloorLineThinThickness, "value", 0.01, 1)
+  .name("Thin thickness (m)");
+floorLineFolder
+  .add(floorLineUniforms.uFloorLineThickThickness, "value", 0.01, 1)
+  .name("Thick thickness (m)");
+
+const floorLineColor = {
+  ink: `#${floorLineUniforms.uFloorLineInkColor.value.getHexString()}`,
+};
+floorLineFolder
+  .addColor(floorLineColor, "ink")
+  .name("Ink color")
+  .onChange((hex: string) => floorLineUniforms.uFloorLineInkColor.value.set(hex));
 
 // Resize
 setupResize(camera, renderer, app, FRUSTRUM_SIZE);

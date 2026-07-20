@@ -32,6 +32,9 @@ vec3 surfaceLayers(vec3 base, vec2 uv, vec2 wallUV, vec2 wallSize, vec2 metric, 
     // Ground zone: the Place Dauphine door arcade lives below the first row.
     vec3 col = placeDauphineDoors(base, along, height);
 
+    // Double division line between floors (drawn under the windows).
+    col = facadeFloorLines(col, height, uGroundHeight, uFloorHeight, uFloorCount);
+
     // Rows start above the ground zone and stop after uFloorCount rows.
     float rowSpan = height - uGroundHeight;
     float row = floor(rowSpan / uFloorHeight);
