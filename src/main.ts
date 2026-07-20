@@ -9,7 +9,7 @@ import { applyPaperShader } from "./shaders/applyPaperShader";
 import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { paperUniforms } from "./shaders/paper/paperUniforms";
-import { facadeUniforms } from "./shaders/facade/facadeUniforms";
+import { facadeUniforms, placeDauphineDoorUniforms } from "./shaders/facade/facadeUniforms";
 
 // app
 const app = document.getElementById("app")!;
@@ -71,6 +71,7 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
   scene.add(gltf.scene);
   models.frame = gltf.scene.getObjectByName(OBJECTS.FRAME)!;
   models.frame.position.y = -1;
+  models.frame.visible = false;
 });
 
 // Regular buildings
@@ -87,9 +88,9 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
 });
 
 // GUI
-const gui = new GUI();
+const gui = new GUI({ closeFolders: true });
 const params = {
-  showMap: true,
+  showMap: false,
   buildings: true,
   showEdges: true,
 };
@@ -168,6 +169,35 @@ facadeFolder
   .addColor(facadeColor, "ink")
   .name("Ink color")
   .onChange((hex: string) => facadeUniforms.uInkColor.value.set(hex));
+
+// gui: Place Dauphine door arcade
+const doorFolder = gui.addFolder("Place Dauphine doors");
+
+doorFolder.add(placeDauphineDoorUniforms.uDoorPitch, "value", 1, 12).name("Door pitch (m)");
+doorFolder.add(placeDauphineDoorUniforms.uDoorWidth, "value", 0.5, 6).name("Door width (m)");
+doorFolder.add(placeDauphineDoorUniforms.uDoorBodyHeight, "value", 1, 12).name("Body height (m)");
+doorFolder.add(placeDauphineDoorUniforms.uDoorArchRadius, "value", 0.2, 4).name("Arch width (m)");
+doorFolder.add(placeDauphineDoorUniforms.uDoorArchHeight, "value", 0.2, 5).name("Arch height (m)");
+doorFolder
+  .add(placeDauphineDoorUniforms.uDoorFrameThickness, "value", 0.05, 1)
+  .name("Frame thickness (m)");
+doorFolder.add(placeDauphineDoorUniforms.uDoorSquareSize, "value", 0.1, 2).name("Square size (m)");
+doorFolder
+  .add(placeDauphineDoorUniforms.uDoorPilasterWidth, "value", 0.05, 1.5)
+  .name("Pilaster width (m)");
+doorFolder.add(placeDauphineDoorUniforms.uDoorCutSize.value, "x", 0, 4).name("Notch width (m)");
+doorFolder.add(placeDauphineDoorUniforms.uDoorCutSize.value, "y", 0, 8).name("Notch height (m)");
+doorFolder
+  .add(placeDauphineDoorUniforms.uDoorCutSide, "value", { Left: -1, Right: 1 })
+  .name("Notch side");
+
+const doorColor = {
+  ink: `#${placeDauphineDoorUniforms.uDoorInkColor.value.getHexString()}`,
+};
+doorFolder
+  .addColor(doorColor, "ink")
+  .name("Ink color")
+  .onChange((hex: string) => placeDauphineDoorUniforms.uDoorInkColor.value.set(hex));
 
 // Resize
 setupResize(camera, renderer, app, FRUSTRUM_SIZE);

@@ -10,3 +10,18 @@ export const facadeUniforms = {
   uFloorCount: { value: 2 }, // number of window rows
   uInkColor: { value: new THREE.Color("#2b2117") },
 };
+
+// Place Dauphine door arcade (ground floor). Isolated so it can be reused.
+export const placeDauphineDoorUniforms = {
+  uDoorPitch: { value: 8.3 }, // horizontal spacing between doors (m)
+  uDoorWidth: { value: 4.34 }, // door leaf width (m)
+  uDoorBodyHeight: { value: 6.9 }, // leaf height up to the arch spring (m)
+  uDoorArchRadius: { value: 2.1 }, // arch half-width (m)
+  uDoorArchHeight: { value: 2.78 }, // arch rise / height (m)
+  uDoorFrameThickness: { value: 0.3 }, // arch ring thickness (m)
+  uDoorSquareSize: { value: 0.72 }, // tympanum square side (m)
+  uDoorPilasterWidth: { value: 1.0 }, // right-hand pilaster width (m)
+  uDoorCutSize: { value: new THREE.Vector2(1.2, 3.5) }, // transparent notch (w, h) (m)
+  uDoorCutSide: { value: 1.0 }, // -1 left, +1 right
+  uDoorInkColor: { value: new THREE.Color("#2b2117") },
+};
