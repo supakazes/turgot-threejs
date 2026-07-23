@@ -172,9 +172,7 @@ imperfectionsFolder
 imperfectionsFolder
   .add(imperfectionUniforms.uInkTransparency, "value", 0, 1)
   .name("Ink transparency");
-imperfectionsFolder
-  .add(imperfectionUniforms.uPaperGrainScale, "value", 1, 120)
-  .name("Grain scale");
+imperfectionsFolder.add(imperfectionUniforms.uPaperGrainScale, "value", 1, 120).name("Grain scale");
 imperfectionsFolder
   .add(imperfectionUniforms.uPaperGrainStrength, "value", 0, 0.3)
   .name("Grain strength");
@@ -182,12 +180,8 @@ imperfectionsFolder
 // gui: shape distortion (pre-shape coordinate warp; wavy outlines)
 const distortionFolder = gui.addFolder("Distortion");
 
-distortionFolder
-  .add(distortionUniforms.uDistortStrength, "value", 0, 1)
-  .name("Strength (m)");
-distortionFolder
-  .add(distortionUniforms.uDistortScale, "value", 0.2, 20)
-  .name("Scale");
+distortionFolder.add(distortionUniforms.uDistortStrength, "value", 0, 1).name("Strength (m)");
+distortionFolder.add(distortionUniforms.uDistortScale, "value", 0.2, 20).name("Scale");
 
 // gui: facade windows
 const facadeFolder = gui.addFolder("Facade");
@@ -239,9 +233,7 @@ doorFolder
 // gui: floor division lines (double band between floors)
 const floorLineFolder = gui.addFolder("Floor lines");
 
-floorLineFolder
-  .add(floorLineUniforms.uFloorLineOffset, "value", -4, 4)
-  .name("Offset (m)");
+floorLineFolder.add(floorLineUniforms.uFloorLineOffset, "value", -4, 4).name("Offset (m)");
 floorLineFolder.add(floorLineUniforms.uFloorLineGap, "value", 0, 2).name("Gap (m)");
 floorLineFolder
   .add(floorLineUniforms.uFloorLineThinThickness, "value", 0.01, 1)
@@ -261,15 +253,9 @@ floorLineFolder
 // gui: vertical hatching (orientation-based shading strokes)
 const hatchingFolder = gui.addFolder("Facade hatching");
 
-hatchingFolder
-  .add(hatchingUniforms.uHatchDensity, "value", 0, 6)
-  .name("Density (lines/m)");
-hatchingFolder
-  .add(hatchingUniforms.uHatchThicknessMin, "value", 0, 1)
-  .name("Thickness (lit)");
-hatchingFolder
-  .add(hatchingUniforms.uHatchThicknessMax, "value", 0, 1)
-  .name("Thickness (shadow)");
+hatchingFolder.add(hatchingUniforms.uHatchDensity, "value", 0, 6).name("Density (lines/m)");
+hatchingFolder.add(hatchingUniforms.uHatchThicknessMin, "value", 0, 1).name("Thickness (lit)");
+hatchingFolder.add(hatchingUniforms.uHatchThicknessMax, "value", 0, 1).name("Thickness (shadow)");
 hatchingFolder.add(hatchingUniforms.uHatchStrength, "value", 0, 1).name("Strength");
 
 const hatchingColor = {
@@ -282,9 +268,9 @@ hatchingFolder
 
 // gui: fake light direction (azimuth + elevation -> uLightDir). Drives the
 // orientation-based hatching; independent of the camera.
-const lightFolder = gui.addFolder("Light (fake)");
+const lightFolder = gui.addFolder("Sun direction (fake light)");
 
-const lightParams = { azimuth: 225, elevation: 20 };
+const lightParams = { azimuth: 58, elevation: 20 };
 function updateLightDir() {
   const az = THREE.MathUtils.degToRad(lightParams.azimuth);
   const el = THREE.MathUtils.degToRad(lightParams.elevation);
@@ -295,7 +281,10 @@ function updateLightDir() {
 }
 updateLightDir();
 lightFolder.add(lightParams, "azimuth", 0, 360, 1).name("Azimuth (deg)").onChange(updateLightDir);
-lightFolder.add(lightParams, "elevation", 0, 90, 1).name("Elevation (deg)").onChange(updateLightDir);
+lightFolder
+  .add(lightParams, "elevation", 0, 90, 1)
+  .name("Elevation (deg)")
+  .onChange(updateLightDir);
 
 // Debug arrow for the fake light direction. It carries no scene position of its
 // own (the light is directional), so each frame we park it in front of the
@@ -327,9 +316,7 @@ function animate() {
   // Keep the light arrow in front of the camera, pointing toward the light.
   if (lightArrow.visible) {
     camera.getWorldDirection(arrowForward);
-    lightArrow.position
-      .copy(camera.position)
-      .addScaledVector(arrowForward, 400);
+    lightArrow.position.copy(camera.position).addScaledVector(arrowForward, 400);
     lightArrow.setDirection(lightUniforms.uLightDir.value);
   }
 

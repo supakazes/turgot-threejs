@@ -28,9 +28,9 @@ export const placeDauphineDoorUniforms = {
 
 // Vertical hatching (engraver's shading strokes). Isolated for reuse.
 export const hatchingUniforms = {
-  uHatchDensity: { value: 2.0 }, // strokes per meter in full shadow (lit keeps a fraction)
-  uHatchThicknessMin: { value: 0.12 }, // stroke thickness when fully lit (0..1 of spacing)
-  uHatchThicknessMax: { value: 0.5 }, // stroke thickness when fully shadowed
+  uHatchDensity: { value: 2.16 }, // strokes per meter in full shadow (lit keeps a fraction)
+  uHatchThicknessMin: { value: 0.017 }, // stroke thickness when fully lit (0..1 of spacing)
+  uHatchThicknessMax: { value: 0.82 }, // stroke thickness when fully shadowed
   uHatchStrength: { value: 0.85 }, // overall hatching opacity (0..1)
   uHatchInkColor: { value: new THREE.Color("#2b2117") },
 };
