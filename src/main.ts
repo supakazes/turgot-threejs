@@ -15,6 +15,8 @@ import {
   facadeUniforms,
   placeDauphineDoorUniforms,
   floorLineUniforms,
+  hatchingUniforms,
+  lightUniforms,
 } from "./shaders/facade/facadeUniforms";
 
 // app
@@ -256,16 +258,80 @@ floorLineFolder
   .name("Ink color")
   .onChange((hex: string) => floorLineUniforms.uFloorLineInkColor.value.set(hex));
 
+// gui: vertical hatching (orientation-based shading strokes)
+const hatchingFolder = gui.addFolder("Facade hatching");
+
+hatchingFolder
+  .add(hatchingUniforms.uHatchDensity, "value", 0, 6)
+  .name("Density (lines/m)");
+hatchingFolder
+  .add(hatchingUniforms.uHatchThicknessMin, "value", 0, 1)
+  .name("Thickness (lit)");
+hatchingFolder
+  .add(hatchingUniforms.uHatchThicknessMax, "value", 0, 1)
+  .name("Thickness (shadow)");
+hatchingFolder.add(hatchingUniforms.uHatchStrength, "value", 0, 1).name("Strength");
+
+const hatchingColor = {
+  ink: `#${hatchingUniforms.uHatchInkColor.value.getHexString()}`,
+};
+hatchingFolder
+  .addColor(hatchingColor, "ink")
+  .name("Ink color")
+  .onChange((hex: string) => hatchingUniforms.uHatchInkColor.value.set(hex));
+
+// gui: fake light direction (azimuth + elevation -> uLightDir). Drives the
+// orientation-based hatching; independent of the camera.
+const lightFolder = gui.addFolder("Light (fake)");
+
+const lightParams = { azimuth: 225, elevation: 20 };
+function updateLightDir() {
+  const az = THREE.MathUtils.degToRad(lightParams.azimuth);
+  const el = THREE.MathUtils.degToRad(lightParams.elevation);
+  const cosEl = Math.cos(el);
+  lightUniforms.uLightDir.value
+    .set(Math.sin(az) * cosEl, Math.sin(el), Math.cos(az) * cosEl)
+    .normalize();
+}
+updateLightDir();
+lightFolder.add(lightParams, "azimuth", 0, 360, 1).name("Azimuth (deg)").onChange(updateLightDir);
+lightFolder.add(lightParams, "elevation", 0, 90, 1).name("Elevation (deg)").onChange(updateLightDir);
+
+// Debug arrow for the fake light direction. It carries no scene position of its
+// own (the light is directional), so each frame we park it in front of the
+// camera and point it toward the light. Arrow points along uLightDir (toward
+// the light source).
+const lightArrow = new THREE.ArrowHelper(
+  lightUniforms.uLightDir.value,
+  new THREE.Vector3(),
+  120,
+  0xffaa00,
+  40,
+  24,
+);
+scene.add(lightArrow);
+lightFolder.add(lightArrow, "visible").name("Show arrow");
+
 // Resize
 setupResize(camera, renderer, app, FRUSTRUM_SIZE);
 
 // Render loop
+const arrowForward = new THREE.Vector3();
 function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
 
   paperRegistry.update(camera);
+
+  // Keep the light arrow in front of the camera, pointing toward the light.
+  if (lightArrow.visible) {
+    camera.getWorldDirection(arrowForward);
+    lightArrow.position
+      .copy(camera.position)
+      .addScaledVector(arrowForward, 400);
+    lightArrow.setDirection(lightUniforms.uLightDir.value);
+  }
 
   renderer.render(scene, camera);
 }
