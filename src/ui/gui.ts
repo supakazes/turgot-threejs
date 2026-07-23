@@ -115,7 +115,9 @@ export function createGui({
   imperfectionsFolder
     .add(imperfectionUniforms.uInkTransparency, "value", 0, 1)
     .name("Ink transparency");
-  imperfectionsFolder.add(imperfectionUniforms.uPaperGrainScale, "value", 1, 120).name("Grain scale");
+  imperfectionsFolder
+    .add(imperfectionUniforms.uPaperGrainScale, "value", 1, 120)
+    .name("Grain scale");
   imperfectionsFolder
     .add(imperfectionUniforms.uPaperGrainStrength, "value", 0, 0.3)
     .name("Grain strength");
@@ -151,11 +153,15 @@ export function createGui({
   doorFolder.add(placeDauphineDoorUniforms.uDoorWidth, "value", 0.5, 6).name("Door width (m)");
   doorFolder.add(placeDauphineDoorUniforms.uDoorBodyHeight, "value", 1, 12).name("Body height (m)");
   doorFolder.add(placeDauphineDoorUniforms.uDoorArchRadius, "value", 0.2, 4).name("Arch width (m)");
-  doorFolder.add(placeDauphineDoorUniforms.uDoorArchHeight, "value", 0.2, 5).name("Arch height (m)");
+  doorFolder
+    .add(placeDauphineDoorUniforms.uDoorArchHeight, "value", 0.2, 5)
+    .name("Arch height (m)");
   doorFolder
     .add(placeDauphineDoorUniforms.uDoorFrameThickness, "value", 0.05, 1)
     .name("Frame thickness (m)");
-  doorFolder.add(placeDauphineDoorUniforms.uDoorSquareSize, "value", 0.1, 2).name("Square size (m)");
+  doorFolder
+    .add(placeDauphineDoorUniforms.uDoorSquareSize, "value", 0.1, 2)
+    .name("Square size (m)");
   doorFolder
     .add(placeDauphineDoorUniforms.uDoorPilasterWidth, "value", 0.05, 1.5)
     .name("Pilaster width (m)");
