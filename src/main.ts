@@ -69,7 +69,7 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
   scene.add(gltf.scene);
   models.placeDauphine = gltf.scene.getObjectByName(OBJECTS.PLACE_DAUPHINE)!;
 
-  applyPaperShader(models.placeDauphine);
+  applyPaperShader(models.placeDauphine, true);
   addEdges(models.placeDauphine);
   setEdgesVisible(params.showEdges);
 });
