@@ -4,6 +4,7 @@ varying vec3 vWorldPosition;
 varying vec2 vWallUV;      // normalised 0..1 per wall (0 when model omits UVs)
 varying vec2 vWallSize;    // (lengthMeters, heightMeters) per wall (0 when omitted)
 varying vec2 vFacadeMetric; // world-space fallback: (alongWall, height) in meters
+varying vec3 vWorldNormal;  // world-space surface normal (for fake lighting)
 
 // provided by createPaperMaterial
 uniform float uPaperScale;
@@ -18,8 +19,9 @@ vec3 paperColor(vec2 uv);
 //   wallSize    (lengthMeters, heightMeters) (valid only when hasWallData)
 //   metric      world-space (alongWall, height) fallback, always valid
 //   hasWallData true when the model supplied wall UV + size
+//   worldNormal world-space surface normal (for orientation-based lighting)
 // Returns the final color after stacking that surface's own layers.
-vec3 surfaceLayers(vec3 base, vec2 uv, vec2 wallUV, vec2 wallSize, vec2 metric, bool hasWallData);
+vec3 surfaceLayers(vec3 base, vec2 uv, vec2 wallUV, vec2 wallSize, vec2 metric, bool hasWallData, vec3 worldNormal);
 
 // Provided by imperfections.glsl: the shared post-shape ink/grain pass.
 vec3 applyImperfections(vec3 color, vec3 base, vec2 uv);
@@ -34,7 +36,7 @@ void main()
 
     bool hasWallData = vWallSize.x > 0.0 && vWallSize.y > 0.0;
 
-    vec3 color = surfaceLayers(base, uv, vWallUV, vWallSize, vFacadeMetric, hasWallData);
+    vec3 color = surfaceLayers(base, uv, vWallUV, vWallSize, vFacadeMetric, hasWallData, normalize(vWorldNormal));
 
     // Final shared pass: rough up the clean, geometric result so it reads as a
     // hand-inked engraving rather than a vector drawing.

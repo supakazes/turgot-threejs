@@ -7,6 +7,10 @@ varying vec2 vWallUV;
 varying vec2 vWallSize;
 varying vec2 vFacadeMetric;
 
+// World-space surface normal, used by surface shaders for orientation-based
+// (camera-independent) fake lighting.
+varying vec3 vWorldNormal;
+
 // Per-wall (lengthMeters, heightMeters). Reads (0,0) when the model omits it.
 attribute vec2 aWallSize;
 
@@ -22,6 +26,8 @@ void main()
     vec3 tangent = normalize(cross(worldNormal, up) + vec3(1e-5));
 
     vFacadeMetric = vec2(dot(world.xyz, tangent), world.y);
+
+    vWorldNormal = worldNormal;
 
     vWallUV = uv;
     vWallSize = aWallSize;
