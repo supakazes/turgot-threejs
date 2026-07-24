@@ -21,7 +21,7 @@ const CAMERA_OFFSET = new THREE.Vector3(0, CAMERA_HEIGHT, CAMERA_Z);
 // place dauphine
 const INITIAL_TARGET = new THREE.Vector3(-483.5906495115238, 0, 316.484266094362);
 
-const INITIAL_ZOOM = 10;
+const INITIAL_ZOOM = 6;
 
 // initialization
 export function initializeCamera(controls: MapControls) {
