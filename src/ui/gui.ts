@@ -44,7 +44,7 @@ export function createGui({
   lightParams,
   updateLightDir,
 }: GuiDeps) {
-  const gui = new GUI({ closeFolders: true });
+  const gui = new GUI({ closeFolders: true, container: document.getElementById("gui-container")! });
 
   // gui: show map floor
   gui
