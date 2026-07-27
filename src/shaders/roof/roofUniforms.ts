@@ -4,12 +4,12 @@ import * as THREE from "three";
 // groups, every roof material references these same objects, so a GUI change
 // updates all roofs at once. Isolated so other roof types can reuse the layer.
 export const roofLineUniforms = {
-  uRoofLineDensity: { value: 1.2 }, // lines per meter at the eave (bottom)
-  uRoofLineDensityGrowth: { value: 0.35 }, // extra lines/m at the ridge (denser going up)
-  uRoofLineThicknessMin: { value: 0.1 }, // stroke thickness at the eave (0..1 of spacing)
-  uRoofLineThicknessMax: { value: 0.5 }, // stroke thickness at the ridge (0..1 of spacing)
-  uRoofLineShadowBoost: { value: 0.3 }, // extra thickness fraction when fully shadowed
-  uRoofLineStrength: { value: 0.85 }, // overall opacity (0..1)
+  uRoofLineDensity: { value: 0.162 }, // lines per meter at the eave (bottom)
+  uRoofLineDensityGrowth: { value: 0.262 }, // extra lines/m at the ridge (denser going up)
+  uRoofLineThicknessMin: { value: 0 }, // stroke thickness at the eave (0..1 of spacing)
+  uRoofLineThicknessMax: { value: 0.398 }, // stroke thickness at the ridge (0..1 of spacing)
+  uRoofLineShadowBoost: { value: 1 }, // extra thickness fraction when fully shadowed
+  uRoofLineStrength: { value: 0.545 }, // overall opacity (0..1)
   uRoofLineInkColor: { value: new THREE.Color("#2b2117") },
 };
 
