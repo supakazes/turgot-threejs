@@ -9,6 +9,7 @@ import {
   floorLineUniforms,
   hatchingUniforms,
 } from "../shaders/facade/facadeUniforms";
+import { roofLineUniforms } from "../shaders/roof/roofUniforms";
 
 export interface GuiParams {
   showMap: boolean;
@@ -103,7 +104,7 @@ export function createGui({
   paperFolder.add(paperUniforms.uSpeck2Size, "value", 0.02, 0.4).name("Speck 2 size");
   paperFolder.add(paperUniforms.uSpeck2Strength, "value", 0, 1).name("Speck 2 strength");
 
-  // gui: imperfections (shared post-shape pass, applied to every facade/roof)
+  // gui: imperfections (shared post-shape pass; one control drives facade + roof)
   const imperfectionsFolder = gui.addFolder("Imperfections");
 
   imperfectionsFolder
@@ -214,6 +215,30 @@ export function createGui({
     .addColor(hatchingColor, "ink")
     .name("Ink color")
     .onChange((hex: string) => hatchingUniforms.uHatchInkColor.value.set(hex));
+
+  // gui: horizontal roof lines (density grows with height, orientation-shaded)
+  const roofLineFolder = gui.addFolder("Roof lines");
+
+  roofLineFolder
+    .add(roofLineUniforms.uRoofLineDensity, "value", 0, 6)
+    .name("Density eave (lines/m)");
+  roofLineFolder
+    .add(roofLineUniforms.uRoofLineDensityGrowth, "value", 0, 1)
+    .name("Density ridge (+lines/m)");
+  roofLineFolder.add(roofLineUniforms.uRoofLineThicknessMin, "value", 0, 1).name("Thickness eave");
+  roofLineFolder
+    .add(roofLineUniforms.uRoofLineThicknessMax, "value", 0, 1)
+    .name("Thickness ridge");
+  roofLineFolder.add(roofLineUniforms.uRoofLineShadowBoost, "value", 0, 1).name("Shadow boost");
+  roofLineFolder.add(roofLineUniforms.uRoofLineStrength, "value", 0, 1).name("Strength");
+
+  const roofLineColor = {
+    ink: `#${roofLineUniforms.uRoofLineInkColor.value.getHexString()}`,
+  };
+  roofLineFolder
+    .addColor(roofLineColor, "ink")
+    .name("Ink color")
+    .onChange((hex: string) => roofLineUniforms.uRoofLineInkColor.value.set(hex));
 
   // gui: fake light direction (azimuth + elevation -> uLightDir). Drives the
   // orientation-based hatching; independent of the camera.
