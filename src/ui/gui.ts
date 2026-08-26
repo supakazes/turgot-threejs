@@ -10,6 +10,7 @@ import {
   hatchingUniforms,
 } from "../shaders/facade/facadeUniforms";
 import { roofLineUniforms } from "../shaders/roof/roofUniforms";
+import { paperBgUniforms } from "../shaders/paper/paperBgUniforms";
 
 export interface GuiParams {
   showImageMap: boolean;
@@ -69,6 +70,10 @@ export function createGui({
     .add(params, "showEdges")
     .name("Edges")
     .onChange((visible: boolean) => setEdgesVisible(visible));
+
+  // gui: background paper scale
+  const bgFolder = gui.addFolder("Background");
+  bgFolder.add(paperBgUniforms.uPaperScale, "value", 0.5, 20).name("Paper scale");
 
   // gui: paper fine-tuning
   const paperFolder = gui.addFolder("Paper");

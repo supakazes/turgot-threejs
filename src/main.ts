@@ -9,6 +9,7 @@ import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { lightUniforms } from "./shaders/facade/facadeUniforms";
 import { createGui } from "./ui/gui";
+import { createBackground } from "./scene/background";
 
 // app
 const app = document.getElementById("app")!;
@@ -25,6 +26,7 @@ initializeCamera(controls);
 
 // Scene
 const scene = new THREE.Scene();
+scene.add(createBackground());
 
 // Ambient light
 scene.add(new THREE.AmbientLight(0xffffff, 2));
