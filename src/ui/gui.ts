@@ -10,15 +10,16 @@ import {
   hatchingUniforms,
 } from "../shaders/facade/facadeUniforms";
 import { roofLineUniforms } from "../shaders/roof/roofUniforms";
+import { paperBgUniforms } from "../shaders/paper/paperBgUniforms";
 
 export interface GuiParams {
-  showMap: boolean;
+  showImageMap: boolean;
   buildings: boolean;
   showEdges: boolean;
 }
 
 export interface GuiModels {
-  frame: THREE.Object3D | undefined;
+  imageMap: THREE.Object3D | undefined;
   regularBuildings: THREE.Object3D[];
   placeDauphine: THREE.Object3D | undefined;
 }
@@ -46,36 +47,33 @@ export function createGui({
   updateLightDir,
 }: GuiDeps) {
   const gui = new GUI({ closeFolders: true, container: document.getElementById("gui-container")! });
-
   // gui: show map floor
-  gui
-    .add(params, "showMap")
-    .name("Map")
-    .onChange((visible: boolean) => {
-      if (models.frame) {
-        models.frame.visible = visible;
-      }
-    });
+  gui.add(params, "showImageMap").onChange((visible: boolean) => {
+    if (models.imageMap) {
+      models.imageMap.visible = visible;
+    }
+  });
 
   // gui: buildings layer
-  gui
-    .add(params, "buildings")
-    .name("Buildings")
-    .onChange((visible: boolean) => {
-      models.regularBuildings?.forEach((obj) => {
-        obj.visible = visible;
-      });
-
-      if (models.placeDauphine) {
-        models.placeDauphine.visible = visible;
-      }
+  gui.add(params, "buildings").onChange((visible: boolean) => {
+    models.regularBuildings?.forEach((obj) => {
+      obj.visible = visible;
     });
+
+    if (models.placeDauphine) {
+      models.placeDauphine.visible = visible;
+    }
+  });
 
   // gui: edge overlay
   gui
     .add(params, "showEdges")
     .name("Edges")
     .onChange((visible: boolean) => setEdgesVisible(visible));
+
+  // gui: background paper scale
+  const bgFolder = gui.addFolder("Background");
+  bgFolder.add(paperBgUniforms.uPaperScale, "value", 0.5, 20).name("Paper scale");
 
   // gui: paper fine-tuning
   const paperFolder = gui.addFolder("Paper");
@@ -226,9 +224,7 @@ export function createGui({
     .add(roofLineUniforms.uRoofLineDensityGrowth, "value", 0, 1)
     .name("Density ridge (+lines/m)");
   roofLineFolder.add(roofLineUniforms.uRoofLineThicknessMin, "value", 0, 1).name("Thickness eave");
-  roofLineFolder
-    .add(roofLineUniforms.uRoofLineThicknessMax, "value", 0, 1)
-    .name("Thickness ridge");
+  roofLineFolder.add(roofLineUniforms.uRoofLineThicknessMax, "value", 0, 1).name("Thickness ridge");
   roofLineFolder.add(roofLineUniforms.uRoofLineShadowBoost, "value", 0, 1).name("Shadow boost");
   roofLineFolder.add(roofLineUniforms.uRoofLineStrength, "value", 0, 1).name("Strength");
 
@@ -249,7 +245,8 @@ export function createGui({
     .add(lightParams, "elevation", 0, 90, 1)
     .name("Elevation (deg)")
     .onChange(updateLightDir);
-  lightFolder.add(lightArrow, "visible").name("Show arrow");
+
+  lightFolder.add(lightArrow, "visible");
 
   return gui;
 }

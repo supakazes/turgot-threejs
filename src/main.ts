@@ -9,6 +9,8 @@ import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { lightUniforms } from "./shaders/facade/facadeUniforms";
 import { createGui } from "./ui/gui";
+import { createBackground } from "./scene/background";
+import { createCompass } from "./ui/compass";
 
 // app
 const app = document.getElementById("app")!;
@@ -22,9 +24,13 @@ controls.maxPolarAngle = Math.PI / 2; // Don't go below the ground:
 
 // camera initialization
 initializeCamera(controls);
+const initialAzimuth = controls.getAzimuthalAngle();
+const initialPolar = controls.getPolarAngle();
+const compass = createCompass(controls, camera, initialAzimuth, initialPolar);
 
 // Scene
 const scene = new THREE.Scene();
+scene.add(createBackground());
 
 // Ambient light
 scene.add(new THREE.AmbientLight(0xffffff, 2));
@@ -41,16 +47,23 @@ scene.add(new THREE.GridHelper(3000, 100));
 // GLB loader
 const loader = new GLTFLoader();
 
+// GUI state
+const guiParams = {
+  showImageMap: true,
+  buildings: true,
+  showEdges: true,
+};
+
 // whole scene
 const models = {
-  frame: undefined as THREE.Object3D | undefined,
+  imageMap: undefined as THREE.Object3D | undefined,
   regularBuildings: [] as THREE.Object3D[],
   placeDauphine: undefined as THREE.Object3D | undefined,
 };
 
 const OBJECTS = {
   ALL_SHAPES: "all_shapes",
-  FRAME: "planche-11-zone",
+  IMAGE_MAP: "planche-11-zone",
   PLACE_DAUPHINE: "place_dauphine",
   SMALL: "small",
 };
@@ -62,15 +75,15 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
 
   applyPaperShader(models.placeDauphine, true);
   addEdges(models.placeDauphine);
-  setEdgesVisible(params.showEdges);
+  setEdgesVisible(guiParams.showEdges);
 });
 
-// Frame (Turgot map image)
+// Turgot image map
 loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
   scene.add(gltf.scene);
-  models.frame = gltf.scene.getObjectByName(OBJECTS.FRAME)!;
-  models.frame.position.y = -1;
-  models.frame.visible = false;
+  models.imageMap = gltf.scene.getObjectByName(OBJECTS.IMAGE_MAP)!;
+  models.imageMap.position.y = -1;
+  models.imageMap.visible = guiParams.showImageMap;
 });
 
 // Regular buildings
@@ -83,15 +96,8 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
       addEdges(obj);
     }
   });
-  setEdgesVisible(params.showEdges);
+  setEdgesVisible(guiParams.showEdges);
 });
-
-// GUI state
-const params = {
-  showMap: false,
-  buildings: true,
-  showEdges: true,
-};
 
 // Fake light direction (azimuth + elevation -> uLightDir). Drives the
 // orientation-based hatching; independent of the camera.
@@ -118,9 +124,10 @@ const lightArrow = new THREE.ArrowHelper(
   40,
   24,
 );
+lightArrow.visible = false;
 scene.add(lightArrow);
 
-createGui({ params, models, setEdgesVisible, lightArrow, lightParams, updateLightDir });
+createGui({ params: guiParams, models, setEdgesVisible, lightArrow, lightParams, updateLightDir });
 
 // Resize
 setupResize(camera, renderer, app, FRUSTRUM_SIZE);
@@ -131,6 +138,8 @@ function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
+
+  compass.update();
 
   paperRegistry.update(camera);
 
