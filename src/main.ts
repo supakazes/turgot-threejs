@@ -10,6 +10,7 @@ import * as paperRegistry from "./shaders/paper/registry";
 import { lightUniforms } from "./shaders/facade/facadeUniforms";
 import { createGui } from "./ui/gui";
 import { createBackground } from "./scene/background";
+import { createCompass } from "./ui/compass";
 
 // app
 const app = document.getElementById("app")!;
@@ -23,6 +24,9 @@ controls.maxPolarAngle = Math.PI / 2; // Don't go below the ground:
 
 // camera initialization
 initializeCamera(controls);
+const initialAzimuth = controls.getAzimuthalAngle();
+const initialPolar = controls.getPolarAngle();
+const compass = createCompass(controls, camera, initialAzimuth, initialPolar);
 
 // Scene
 const scene = new THREE.Scene();
@@ -134,6 +138,8 @@ function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
+
+  compass.update();
 
   paperRegistry.update(camera);
 
