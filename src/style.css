@@ -7,13 +7,16 @@ body {
 }
 
 body {
-  background: url(/public/images/frame-pattern.jpg);
+  background: url(/public/images/frame-pattern.jpg) 0 0 repeat;
 }
 
 /* canvas */
 #app {
   position: fixed;
-  inset: 3rem;
+  left: 3.1rem;
+  right: 3.1rem;
+  top: 2.9rem;
+  bottom: 2.9rem;
   overflow: hidden;
 }
 canvas {
