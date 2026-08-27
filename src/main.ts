@@ -9,7 +9,6 @@ import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { lightUniforms } from "./shaders/facade/facadeUniforms";
 import { createGui } from "./ui/gui";
-import { createBackground } from "./scene/background";
 import { createCompass } from "./ui/compass";
 
 // app
@@ -30,7 +29,6 @@ const compass = createCompass(controls, camera, initialAzimuth, initialPolar);
 
 // Scene
 const scene = new THREE.Scene();
-scene.add(createBackground());
 
 // Ambient light
 scene.add(new THREE.AmbientLight(0xffffff, 2));
