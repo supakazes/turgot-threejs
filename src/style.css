@@ -1,18 +1,28 @@
 html,
-body,
-#app {
+body {
   width: 100%;
   height: 100%;
   margin: 0;
   overflow: hidden;
 }
 
+body {
+  background: url(/public/images/frame-pattern.jpg);
+}
+
+/* canvas */
+#app {
+  position: fixed;
+  inset: 3rem;
+  overflow: hidden;
+}
 canvas {
   display: block;
   position: relative;
   z-index: 1;
 }
 
+/* GUI */
 #gui-container {
   position: absolute;
   bottom: 50%;
@@ -21,6 +31,7 @@ canvas {
   z-index: 2;
 }
 
+/* compass button */
 #compass {
   position: fixed;
   bottom: 16px;
