@@ -21,7 +21,6 @@ function onResize(
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 }
 
-// resize.ts
 export function setupResize(
   camera: THREE.OrthographicCamera,
   renderer: THREE.WebGLRenderer,
