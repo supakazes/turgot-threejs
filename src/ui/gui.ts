@@ -10,6 +10,7 @@ import {
   hatchingUniforms,
 } from "../shaders/facade/facadeUniforms";
 import { roofLineUniforms } from "../shaders/roof/roofUniforms";
+import { waterUniforms } from "../shaders/water/waterUniforms";
 
 export interface GuiParams {
   showImageMap: boolean;
@@ -230,6 +231,24 @@ export function createGui({
     .addColor(roofLineColor, "ink")
     .name("Ink color")
     .onChange((hex: string) => roofLineUniforms.uRoofLineInkColor.value.set(hex));
+
+  // gui: Seine water lines
+  const seineFolder = gui.addFolder("Seine");
+
+  seineFolder.add(waterUniforms.uWaterLineDensity, "value", 1, 1000).name("Line density");
+  seineFolder.add(waterUniforms.uWaterLineThickness, "value", 0.05, 0.8).name("Line thickness");
+  seineFolder.add(waterUniforms.uWaterBankCurve, "value", 0.05, 1.0).name("Bank curve");
+  seineFolder.add(waterUniforms.uWaterFlowSpeed, "value", 0, 0.3).name("Flow speed");
+  seineFolder.add(waterUniforms.uWaterCurlStrength, "value", 0, 3).name("Curl strength");
+  seineFolder.add(waterUniforms.uWaterCurlScale, "value", 0.01, 1).name("Curl scale");
+  seineFolder.add(waterUniforms.uWaterMergeStrength, "value", 0, 3).name("Merge strength");
+  seineFolder.add(waterUniforms.uWaterBankFade, "value", 0, 0.4).name("Bank fade");
+
+  const seineInkColor = { ink: `#${waterUniforms.uWaterInkColor.value.getHexString()}` };
+  seineFolder
+    .addColor(seineInkColor, "ink")
+    .name("Ink color")
+    .onChange((hex: string) => waterUniforms.uWaterInkColor.value.set(hex));
 
   // gui: fake light direction (azimuth + elevation -> uLightDir). Drives the
   // orientation-based hatching; independent of the camera.

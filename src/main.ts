@@ -5,6 +5,8 @@ import { setupResize } from "./core/resize";
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
 import { applyPaperShader } from "./shaders/applyPaperShader";
+import { createWaterMaterial } from "./shaders/water/waterMaterial";
+import { register } from "./shaders/paper/registry";
 import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { lightUniforms } from "./shaders/facade/facadeUniforms";
@@ -39,8 +41,8 @@ dirLight.position.set(100, 200, 100);
 scene.add(dirLight);
 
 // Helpers
-scene.add(new THREE.AxesHelper(100));
-scene.add(new THREE.GridHelper(3000, 100));
+// scene.add(new THREE.AxesHelper(100));
+// scene.add(new THREE.GridHelper(3000, 100));
 
 // GLB loader
 const loader = new GLTFLoader();
@@ -64,6 +66,7 @@ const OBJECTS = {
   IMAGE_MAP: "planche-11-zone",
   PLACE_DAUPHINE: "place_dauphine",
   SMALL: "small",
+  SEINE: "la-seine",
 };
 
 // Place Dauphine
@@ -84,13 +87,21 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
   models.imageMap.visible = guiParams.showImageMap;
 });
 
-// Regular buildings
+// Regular buildings + Seine
 loader.load("./models/buildings/scene.glb", (gltf) => {
   scene.add(gltf.scene);
   gltf.scene.traverse((obj) => {
     if (obj.name.startsWith(OBJECTS.ALL_SHAPES) || obj.name === OBJECTS.SMALL) {
       models.regularBuildings?.push(obj);
       applyPaperShader(obj);
+      addEdges(obj);
+      return;
+    }
+
+    if (obj.name === OBJECTS.SEINE && obj instanceof THREE.Mesh) {
+      const mat = createWaterMaterial();
+      register(mat);
+      obj.material = mat;
       addEdges(obj);
     }
   });
