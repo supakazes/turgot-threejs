@@ -15,10 +15,11 @@ export interface GuiParams {
   showImageMap: boolean;
   buildings: boolean;
   showEdges: boolean;
+  elevationScale: number;
 }
 
 export interface GuiModels {
-  imageMap: THREE.Object3D | undefined;
+  floor: THREE.Object3D | undefined;
   regularBuildings: THREE.Object3D[];
   placeDauphine: THREE.Object3D | undefined;
 }
@@ -48,8 +49,8 @@ export function createGui({
   const gui = new GUI({ closeFolders: true, container: document.getElementById("gui-container")! });
   // gui: show map floor
   gui.add(params, "showImageMap").onChange((visible: boolean) => {
-    if (models.imageMap) {
-      models.imageMap.visible = visible;
+    if (models.floor) {
+      models.floor.visible = visible;
     }
   });
 
@@ -69,6 +70,19 @@ export function createGui({
     .add(params, "showEdges")
     .name("Edges")
     .onChange((visible: boolean) => setEdgesVisible(visible));
+
+  // gui: floor elevation depth (red channel = 0, transparent = -scale)
+  gui
+    .add(params, "elevationScale", 0, 50)
+    .name("Elevation scale")
+    .onChange((scale: number) => {
+      models.floor?.traverse((child) => {
+        if (!(child instanceof THREE.Mesh)) return;
+        const mat = child.material as THREE.MeshStandardMaterial;
+        mat.displacementScale = scale;
+        mat.displacementBias = -scale;
+      });
+    });
 
   // gui: paper fine-tuning
   const paperFolder = gui.addFolder("Paper");

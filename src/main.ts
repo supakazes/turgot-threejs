@@ -5,6 +5,7 @@ import { setupResize } from "./core/resize";
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
 import { applyPaperShader } from "./shaders/applyPaperShader";
+
 import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { lightUniforms } from "./shaders/facade/facadeUniforms";
@@ -17,7 +18,7 @@ app.appendChild(renderer.domElement);
 
 // Controls
 const controls = new MapControls(camera, renderer.domElement); // behaves like a map
-controls.minZoom = 1; // Zoom limits
+controls.minZoom = 0; // Zoom limits
 controls.maxZoom = 20;
 controls.maxPolarAngle = Math.PI / 2; // Don't go below the ground:
 
@@ -39,8 +40,8 @@ dirLight.position.set(100, 200, 100);
 scene.add(dirLight);
 
 // Helpers
-scene.add(new THREE.AxesHelper(100));
-scene.add(new THREE.GridHelper(3000, 100));
+// scene.add(new THREE.AxesHelper(100));
+// scene.add(new THREE.GridHelper(3000, 100));
 
 // GLB loader
 const loader = new GLTFLoader();
@@ -50,18 +51,20 @@ const guiParams = {
   showImageMap: true,
   buildings: true,
   showEdges: true,
+  elevationScale: 20,
 };
 
 // whole scene
 const models = {
-  imageMap: undefined as THREE.Object3D | undefined,
+  floor: undefined as THREE.Object3D | undefined,
   regularBuildings: [] as THREE.Object3D[],
   placeDauphine: undefined as THREE.Object3D | undefined,
+  laSeine: undefined as THREE.Object3D | undefined,
 };
 
 const OBJECTS = {
   ALL_SHAPES: "all_shapes",
-  IMAGE_MAP: "planche-11-zone",
+  FLOOR: "planche-11-zone",
   PLACE_DAUPHINE: "place_dauphine",
   SMALL: "small",
 };
@@ -77,12 +80,60 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
 });
 
 // Turgot image map
+const elevationTex = new THREE.TextureLoader().load("./images/elevation-data.png");
+elevationTex.flipY = false; // match GLTFLoader convention (flipY=false, V=0=image top)
+
 loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
   scene.add(gltf.scene);
-  models.imageMap = gltf.scene.getObjectByName(OBJECTS.IMAGE_MAP)!;
-  models.imageMap.position.y = -1;
-  models.imageMap.visible = guiParams.showImageMap;
+  models.floor = gltf.scene.getObjectByName(OBJECTS.FLOOR)!;
+  models.floor.position.y = -1;
+  models.floor.visible = guiParams.showImageMap;
+
+  models.floor.traverse((child) => {
+    if (!(child instanceof THREE.Mesh)) return;
+    const existingMat = child.material as THREE.MeshStandardMaterial;
+
+    // Replace with a subdivided plane so displacementMap has enough vertices.
+    child.geometry.computeBoundingBox();
+    const lb = child.geometry.boundingBox!;
+    const w = lb.max.x - lb.min.x;
+    const d = lb.max.z - lb.min.z;
+    const segs = Math.max(64, Math.ceil(Math.max(w, d) / 5));
+    const subdivided = new THREE.PlaneGeometry(w, d, segs, segs);
+    subdivided.rotateX(-Math.PI / 2);
+    // rotateX flips V relative to the original GLB UV — restore it
+    const uvAttr = subdivided.attributes.uv as THREE.BufferAttribute;
+    for (let i = 0; i < uvAttr.count; i++) uvAttr.setY(i, 1 - uvAttr.getY(i));
+    subdivided.translate(
+      (lb.min.x + lb.max.x) / 2,
+      (lb.min.y + lb.max.y) / 2,
+      (lb.min.z + lb.max.z) / 2,
+    );
+    child.geometry = subdivided;
+
+    const mat = new THREE.MeshStandardMaterial();
+    if (existingMat.map) mat.map = existingMat.map;
+    mat.displacementMap = elevationTex;
+    mat.displacementScale = guiParams.elevationScale;
+    mat.displacementBias = -guiParams.elevationScale;
+    child.material = mat;
+
+    // add plane for the Seine
+    const scenePlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(w, d, segs, segs),
+      new THREE.MeshStandardMaterial({ color: 0xeeeeee, side: THREE.DoubleSide }),
+    );
+    scenePlane.rotateX(-Math.PI / 2);
+    scenePlane.position.set(
+      (lb.min.x + lb.max.x) / 2,
+      (lb.min.y + lb.max.y) / 2 - 1.2,
+      (lb.min.z + lb.max.z) / 2,
+    );
+    scene.add(scenePlane);
+  });
 });
+
+// la seine
 
 // Regular buildings
 loader.load("./models/buildings/scene.glb", (gltf) => {
@@ -92,6 +143,7 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
       models.regularBuildings?.push(obj);
       applyPaperShader(obj);
       addEdges(obj);
+      return;
     }
   });
   setEdgesVisible(guiParams.showEdges);

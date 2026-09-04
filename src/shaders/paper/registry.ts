@@ -12,10 +12,15 @@ export function register(material: THREE.ShaderMaterial) {
 }
 
 export function update(camera: THREE.Camera) {
+  const now = performance.now() * 0.001;
+
   paperMatrix.copy(camera.matrixWorldInverse);
   paperMatrix.setPosition(0, 0, 0);
 
   for (const material of materials) {
     material.uniforms.uPaperMatrix.value.copy(paperMatrix);
+    if (material.uniforms.uTime) {
+      material.uniforms.uTime.value = now;
+    }
   }
 }
