@@ -5,8 +5,7 @@ import { setupResize } from "./core/resize";
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { renderer } from "./renderer/renderer";
 import { applyPaperShader } from "./shaders/applyPaperShader";
-import { createWaterMaterial } from "./shaders/water/waterMaterial";
-import { register } from "./shaders/paper/registry";
+
 import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
 import { lightUniforms } from "./shaders/facade/facadeUniforms";
@@ -19,7 +18,7 @@ app.appendChild(renderer.domElement);
 
 // Controls
 const controls = new MapControls(camera, renderer.domElement); // behaves like a map
-controls.minZoom = 1; // Zoom limits
+controls.minZoom = 0; // Zoom limits
 controls.maxZoom = 20;
 controls.maxPolarAngle = Math.PI / 2; // Don't go below the ground:
 
@@ -52,21 +51,21 @@ const guiParams = {
   showImageMap: true,
   buildings: true,
   showEdges: true,
+  elevationScale: 10,
 };
 
 // whole scene
 const models = {
-  imageMap: undefined as THREE.Object3D | undefined,
+  floor: undefined as THREE.Object3D | undefined,
   regularBuildings: [] as THREE.Object3D[],
   placeDauphine: undefined as THREE.Object3D | undefined,
 };
 
 const OBJECTS = {
   ALL_SHAPES: "all_shapes",
-  IMAGE_MAP: "planche-11-zone",
+  FLOOR: "planche-11-zone",
   PLACE_DAUPHINE: "place_dauphine",
   SMALL: "small",
-  SEINE: "la-seine",
 };
 
 // Place Dauphine
@@ -80,11 +79,38 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
 });
 
 // Turgot image map
+const elevationTex = new THREE.TextureLoader().load("./images/elevation-data.png");
+
 loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
   scene.add(gltf.scene);
-  models.imageMap = gltf.scene.getObjectByName(OBJECTS.IMAGE_MAP)!;
-  models.imageMap.position.y = -1;
-  models.imageMap.visible = guiParams.showImageMap;
+  models.floor = gltf.scene.getObjectByName(OBJECTS.FLOOR)!;
+  models.floor.position.y = -1;
+  models.floor.visible = guiParams.showImageMap;
+
+  models.floor.traverse((child) => {
+    if (!(child instanceof THREE.Mesh)) return;
+    const existing = child.material as THREE.MeshStandardMaterial;
+
+    // Replace with a subdivided plane so displacementMap has enough vertices.
+    // Use the geometry's own bounding box (local space) to match size & center.
+    child.geometry.computeBoundingBox();
+    const lb = child.geometry.boundingBox!;
+    const lw = lb.max.x - lb.min.x;
+    const ld = lb.max.z - lb.min.z;
+    const lcy = (lb.max.y + lb.min.y) / 2;
+    const segs = Math.max(64, Math.ceil(Math.max(lw, ld) / 5));
+    const subdivided = new THREE.PlaneGeometry(lw, ld, segs, segs);
+    subdivided.rotateX(-Math.PI / 2);
+    subdivided.translate((lb.min.x + lb.max.x) / 2, lcy, (lb.min.z + lb.max.z) / 2);
+    child.geometry = subdivided;
+
+    const mat = new THREE.MeshStandardMaterial();
+    if (existing.map) mat.map = existing.map;
+    mat.displacementMap = elevationTex;
+    mat.displacementScale = guiParams.elevationScale;
+    mat.displacementBias = -guiParams.elevationScale;
+    child.material = mat;
+  });
 });
 
 // Regular buildings + Seine
@@ -96,13 +122,6 @@ loader.load("./models/buildings/scene.glb", (gltf) => {
       applyPaperShader(obj);
       addEdges(obj);
       return;
-    }
-
-    if (obj.name === OBJECTS.SEINE && obj instanceof THREE.Mesh) {
-      const mat = createWaterMaterial();
-      register(mat);
-      obj.material = mat;
-      addEdges(obj);
     }
   });
   setEdgesVisible(guiParams.showEdges);

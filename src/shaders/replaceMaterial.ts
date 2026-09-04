@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { createFacadeMaterial } from "./facade/facadeMaterial";
 import { createRoofMaterial } from "./roof/roofMaterial";
-import { createWaterMaterial } from "./water/waterMaterial";
 import { createDefaultPaperMaterial } from "./paper/paperMaterial";
 
 // Maps a mesh material to its paper-based shader by material name.
@@ -14,9 +13,6 @@ export const replaceMaterial = (material: THREE.Material) => {
 
     case "roof":
       return createRoofMaterial();
-
-    case "la-seine":
-      return createWaterMaterial();
 
     default:
       return createDefaultPaperMaterial();
