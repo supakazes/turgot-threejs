@@ -80,6 +80,7 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
 
 // Turgot image map
 const elevationTex = new THREE.TextureLoader().load("./images/elevation-data.png");
+elevationTex.flipY = false; // match GLTFLoader convention (flipY=false, V=0=image top)
 
 loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
   scene.add(gltf.scene);
@@ -92,16 +93,17 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
     const existing = child.material as THREE.MeshStandardMaterial;
 
     // Replace with a subdivided plane so displacementMap has enough vertices.
-    // Use the geometry's own bounding box (local space) to match size & center.
     child.geometry.computeBoundingBox();
     const lb = child.geometry.boundingBox!;
-    const lw = lb.max.x - lb.min.x;
-    const ld = lb.max.z - lb.min.z;
-    const lcy = (lb.max.y + lb.min.y) / 2;
-    const segs = Math.max(64, Math.ceil(Math.max(lw, ld) / 5));
-    const subdivided = new THREE.PlaneGeometry(lw, ld, segs, segs);
+    const w = lb.max.x - lb.min.x;
+    const d = lb.max.z - lb.min.z;
+    const segs = Math.max(64, Math.ceil(Math.max(w, d) / 5));
+    const subdivided = new THREE.PlaneGeometry(w, d, segs, segs);
     subdivided.rotateX(-Math.PI / 2);
-    subdivided.translate((lb.min.x + lb.max.x) / 2, lcy, (lb.min.z + lb.max.z) / 2);
+    // rotateX flips V relative to the original GLB UV — restore it
+    const uvAttr = subdivided.attributes.uv as THREE.BufferAttribute;
+    for (let i = 0; i < uvAttr.count; i++) uvAttr.setY(i, 1 - uvAttr.getY(i));
+    subdivided.translate((lb.min.x + lb.max.x) / 2, (lb.min.y + lb.max.y) / 2, (lb.min.z + lb.max.z) / 2);
     child.geometry = subdivided;
 
     const mat = new THREE.MeshStandardMaterial();
@@ -113,7 +115,7 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
   });
 });
 
-// Regular buildings + Seine
+// Regular buildings
 loader.load("./models/buildings/scene.glb", (gltf) => {
   scene.add(gltf.scene);
   gltf.scene.traverse((obj) => {
