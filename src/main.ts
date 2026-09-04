@@ -51,7 +51,7 @@ const guiParams = {
   showImageMap: true,
   buildings: true,
   showEdges: true,
-  elevationScale: 10,
+  elevationScale: 20,
 };
 
 // whole scene
@@ -59,6 +59,7 @@ const models = {
   floor: undefined as THREE.Object3D | undefined,
   regularBuildings: [] as THREE.Object3D[],
   placeDauphine: undefined as THREE.Object3D | undefined,
+  laSeine: undefined as THREE.Object3D | undefined,
 };
 
 const OBJECTS = {
@@ -90,7 +91,7 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
 
   models.floor.traverse((child) => {
     if (!(child instanceof THREE.Mesh)) return;
-    const existing = child.material as THREE.MeshStandardMaterial;
+    const existingMat = child.material as THREE.MeshStandardMaterial;
 
     // Replace with a subdivided plane so displacementMap has enough vertices.
     child.geometry.computeBoundingBox();
@@ -103,17 +104,36 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
     // rotateX flips V relative to the original GLB UV — restore it
     const uvAttr = subdivided.attributes.uv as THREE.BufferAttribute;
     for (let i = 0; i < uvAttr.count; i++) uvAttr.setY(i, 1 - uvAttr.getY(i));
-    subdivided.translate((lb.min.x + lb.max.x) / 2, (lb.min.y + lb.max.y) / 2, (lb.min.z + lb.max.z) / 2);
+    subdivided.translate(
+      (lb.min.x + lb.max.x) / 2,
+      (lb.min.y + lb.max.y) / 2,
+      (lb.min.z + lb.max.z) / 2,
+    );
     child.geometry = subdivided;
 
     const mat = new THREE.MeshStandardMaterial();
-    if (existing.map) mat.map = existing.map;
+    if (existingMat.map) mat.map = existingMat.map;
     mat.displacementMap = elevationTex;
     mat.displacementScale = guiParams.elevationScale;
     mat.displacementBias = -guiParams.elevationScale;
     child.material = mat;
+
+    // add plane for the Seine
+    const scenePlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(w, d, segs, segs),
+      new THREE.MeshStandardMaterial({ color: 0xeeeeee, side: THREE.DoubleSide }),
+    );
+    scenePlane.rotateX(-Math.PI / 2);
+    scenePlane.position.set(
+      (lb.min.x + lb.max.x) / 2,
+      (lb.min.y + lb.max.y) / 2 - 1.2,
+      (lb.min.z + lb.max.z) / 2,
+    );
+    scene.add(scenePlane);
   });
 });
+
+// la seine
 
 // Regular buildings
 loader.load("./models/buildings/scene.glb", (gltf) => {

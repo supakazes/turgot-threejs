@@ -9,7 +9,7 @@ export const camera = new THREE.OrthographicCamera(
   FRUSTRUM_SIZE / 2,
   -FRUSTRUM_SIZE / 2,
   0.1,
-  100000,
+  10000,
 );
 
 // Camera settings
