@@ -3,8 +3,17 @@ import { replaceMaterial } from "./replaceMaterial";
 import { createDefaultPaperMaterial } from "./paper/paperMaterial";
 import { register } from "./paper/registry";
 
-function calibrateRoof(mesh: THREE.Mesh, material: any) {
-  if (!material._uRoofBaseHeight) return;
+type RoofMaterial = THREE.Material & {
+  _uRoofBaseHeight: { value: number };
+  _uRoofSpan: { value: number };
+};
+
+function isRoofMaterial(m: THREE.Material): m is RoofMaterial {
+  return "_uRoofBaseHeight" in m;
+}
+
+function calibrateRoof(mesh: THREE.Mesh, material: THREE.Material) {
+  if (!isRoofMaterial(material)) return;
   const bbox = new THREE.Box3().setFromObject(mesh);
   const span = Math.max(bbox.max.y - bbox.min.y, 1e-3);
   material._uRoofBaseHeight.value = bbox.min.y;

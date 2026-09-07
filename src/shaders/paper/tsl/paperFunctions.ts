@@ -12,19 +12,20 @@ import {
   Loop,
   select,
 } from "three/tsl";
+import type { Node } from "three/webgpu";
 import { paperUniforms } from "../paperUniforms";
 
-export const hashFn = Fn(([p]: [any]) => {
+export const hashFn = Fn(([p]: [Node<"vec2">]) => {
   const p3 = fract(vec3(p.xyx).mul(0.1031)).toVar();
   p3.addAssign(dot(p3, p3.yzx.add(33.33)));
   return fract(p3.x.add(p3.y).mul(p3.z));
 }).setLayout({ name: "hash", type: "float", inputs: [{ name: "p", type: "vec2" }] });
 
-export const hash2Fn = Fn(([p]: [any]) => {
+export const hash2Fn = Fn(([p]: [Node<"vec2">]) => {
   return vec2(hashFn(p), hashFn(p.add(17.13)));
 }).setLayout({ name: "hash2", type: "vec2", inputs: [{ name: "p", type: "vec2" }] });
 
-export const noiseFn = Fn(([p]: [any]) => {
+export const noiseFn = Fn(([p]: [Node<"vec2">]) => {
   const i = floor(p);
   const a = hashFn(i);
   const b = hashFn(i.add(vec2(1, 0)));
@@ -37,7 +38,7 @@ export const noiseFn = Fn(([p]: [any]) => {
   return mix(mix(a, b, ux), mix(c, d, ux), uy);
 }).setLayout({ name: "noise", type: "float", inputs: [{ name: "p", type: "vec2" }] });
 
-export const fbmFn = Fn(([p_in]: [any]) => {
+export const fbmFn = Fn(([p_in]: [Node<"vec2">]) => {
   const px = float(0).toVar();
   const py = float(0).toVar();
   px.assign(p_in.x);
@@ -55,7 +56,7 @@ export const fbmFn = Fn(([p_in]: [any]) => {
   return value;
 }).setLayout({ name: "fbm", type: "float", inputs: [{ name: "p_in", type: "vec2" }] });
 
-const specksFn = Fn(([uv_, scale, density, size, seed]: [any, any, any, any, any]) => {
+const specksFn = Fn(([uv_, scale, density, size, seed]: [Node<"vec2">, Node<"float">, Node<"float">, Node<"float">, Node<"float">]) => {
   const scaledUV = uv_.mul(scale);
   const cell = floor(scaledUV).add(seed).toVar();
   const f = fract(scaledUV);
@@ -76,7 +77,7 @@ const specksFn = Fn(([uv_, scale, density, size, seed]: [any, any, any, any, any
   ],
 });
 
-export const paperColorFn = Fn(([uvCoord]: [any]) => {
+export const paperColorFn = Fn(([uvCoord]: [Node<"vec2">]) => {
   const {
     uPaperBaseColor,
     uStain1Scale,

@@ -1,8 +1,15 @@
 import { Fn, float, abs, floor, min, mix, smoothstep, clamp, fwidth, select } from "three/tsl";
+import type { Node } from "three/webgpu";
 import { floorLineUniforms } from "../facadeUniforms";
 
 export const facadeFloorLinesFn = Fn(
-  ([col_in, height, groundHeight, floorHeight, floorCount]: [any, any, any, any, any]) => {
+  ([col_in, height, groundHeight, floorHeight, floorCount]: [
+    Node<"color">,
+    Node<"float">,
+    Node<"float">,
+    Node<"float">,
+    Node<"float">,
+  ]) => {
     const {
       uFloorLineOffset,
       uFloorLineGap,

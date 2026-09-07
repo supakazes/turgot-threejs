@@ -1,7 +1,8 @@
 import { Fn, float, clamp, mix, abs, fract, fwidth, smoothstep } from "three/tsl";
+import type { Node } from "three/webgpu";
 import { roofLineUniforms } from "../roofUniforms";
 
-export const roofHorizontalLinesFn = Fn(([col_in, height, climb, light]: [any, any, any, any]) => {
+export const roofHorizontalLinesFn = Fn(([col_in, height, climb, light]: [Node<"color">, Node<"float">, Node<"float">, Node<"float">]) => {
   const {
     uRoofLineDensity,
     uRoofLineDensityGrowth,
@@ -27,5 +28,5 @@ export const roofHorizontalLinesFn = Fn(([col_in, height, climb, light]: [any, a
   const aa = clamp(fwidth(phase), float(1e-4), float(0.4));
   const ink = float(1).sub(smoothstep(aa.negate(), aa, d)).mul(uRoofLineStrength);
 
-  return mix(col_in, uRoofLineInkColor, ink);
+  return mix(col_in, uRoofLineInkColor, ink).toColor();
 });

@@ -1,7 +1,8 @@
 import { Fn, float, clamp, mix, abs, fract, fwidth, smoothstep } from "three/tsl";
+import type { Node } from "three/webgpu";
 import { hatchingUniforms } from "../facadeUniforms";
 
-export const facadeHatchingFn = Fn(([col_in, along, light]: [any, any, any]) => {
+export const facadeHatchingFn = Fn(([col_in, along, light]: [Node<"color">, Node<"float">, Node<"float">]) => {
   const { uHatchDensity, uHatchThicknessMin, uHatchThicknessMax, uHatchStrength, uHatchInkColor } =
     hatchingUniforms;
 
@@ -15,5 +16,5 @@ export const facadeHatchingFn = Fn(([col_in, along, light]: [any, any, any]) => 
   const aa = clamp(fwidth(slot), float(1e-4), float(0.4));
   const ink = float(1).sub(smoothstep(aa.negate(), aa, d)).mul(uHatchStrength);
 
-  return mix(col_in, uHatchInkColor, ink);
+  return mix(col_in, uHatchInkColor, ink).toColor();
 });

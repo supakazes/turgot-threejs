@@ -1,6 +1,12 @@
 import { uniform } from "three/tsl";
+import { MeshBasicNodeMaterial } from "three/webgpu";
 import { createPaperMaterial } from "../paper/createPaperMaterial";
 import { roofSurfaceLayersFn } from "./tsl/roofSurfaceLayers";
+
+type RoofMaterial = MeshBasicNodeMaterial & {
+  _uRoofBaseHeight: { value: number };
+  _uRoofSpan: { value: number };
+};
 
 export function createRoofMaterial() {
   const uRoofBaseHeight = uniform(0.0);
@@ -18,10 +24,10 @@ export function createRoofMaterial() {
       uRoofBaseHeight,
       uRoofSpan,
     );
-  });
+  }) as RoofMaterial;
 
-  (material as any)._uRoofBaseHeight = uRoofBaseHeight;
-  (material as any)._uRoofSpan = uRoofSpan;
+  material._uRoofBaseHeight = uRoofBaseHeight;
+  material._uRoofSpan = uRoofSpan;
 
   return material;
 }

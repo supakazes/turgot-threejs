@@ -4,7 +4,7 @@ import { uPaperMatrix } from "./paperUniforms";
 const paperMatrix = new THREE.Matrix4();
 
 // No-op: uPaperMatrix is a shared TSL uniform node, updated once for all materials.
-export function register(_material: any) {}
+export function register(_material: THREE.Material) {}
 
 export function update(camera: THREE.Camera) {
   paperMatrix.copy(camera.matrixWorldInverse);

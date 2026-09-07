@@ -1,6 +1,7 @@
 import { Fn, vec2, float, abs, max, min, length } from "three/tsl";
+import type { Node } from "three/webgpu";
 
-export const sdBoxFn = Fn(([p, halfSize]: [any, any]) => {
+export const sdBoxFn = Fn(([p, halfSize]: [Node<"vec2">, Node<"vec2">]) => {
   const dx = abs(p.x).sub(halfSize.x);
   const dy = abs(p.y).sub(halfSize.y);
   const d = vec2(dx, dy);
@@ -14,7 +15,7 @@ export const sdBoxFn = Fn(([p, halfSize]: [any, any]) => {
   ],
 });
 
-export const sdCircleFn = Fn(([p, r]: [any, any]) => {
+export const sdCircleFn = Fn(([p, r]: [Node<"vec2">, Node<"float">]) => {
   return length(p).sub(r);
 }).setLayout({
   name: "sdCircle",

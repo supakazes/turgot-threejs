@@ -15,6 +15,7 @@ import {
   dot,
   If,
 } from "three/tsl";
+import type { Node } from "three/webgpu";
 import { facadeUniforms, lightUniforms } from "../facadeUniforms";
 import { warpShapeFn } from "../../paper/tsl/distortionFunctions";
 import { sdBoxFn } from "./sdfFunctions";
@@ -24,13 +25,13 @@ import { placeDauphineDoorsFn } from "./placeDauphineDoorFunctions";
 
 export const facadeSurfaceLayersFn = Fn(
   ([base, _uvPaper, wallUV, wallSize, metric, hasWallData, worldNormal]: [
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
+    Node<"color">,
+    Node<"vec2">,
+    Node<"vec2">,
+    Node<"vec2">,
+    Node<"vec2">,
+    Node<"bool">,
+    Node<"vec3">,
   ]) => {
     const { uWindowPitch, uFloorHeight, uWindowSize, uGroundHeight, uFloorCount, uInkColor } =
       facadeUniforms;

@@ -3,7 +3,7 @@ import type { Node } from "three/webgpu";
 import { distortionUniforms } from "../distortionUniforms";
 import { fbmFn } from "./paperFunctions";
 
-const warpOffsetXFn = Fn(([px, py]: [any, any]) => {
+const warpOffsetXFn = Fn(([px, py]: [Node<"float">, Node<"float">]) => {
   const { uDistortStrength, uDistortScale } = distortionUniforms;
   const nx = fbmFn(vec2(px, py).mul(uDistortScale).add(13.1));
   return select(uDistortStrength.lessThanEqual(0.0), float(0), nx.sub(0.5).mul(uDistortStrength));
@@ -16,7 +16,7 @@ const warpOffsetXFn = Fn(([px, py]: [any, any]) => {
   ],
 });
 
-const warpOffsetYFn = Fn(([px, py]: [any, any]) => {
+const warpOffsetYFn = Fn(([px, py]: [Node<"float">, Node<"float">]) => {
   const { uDistortStrength, uDistortScale } = distortionUniforms;
   const ny = fbmFn(vec2(px, py).mul(uDistortScale).add(71.7));
   return select(uDistortStrength.lessThanEqual(0.0), float(0), ny.sub(0.5).mul(uDistortStrength));

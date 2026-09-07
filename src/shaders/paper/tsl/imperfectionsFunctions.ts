@@ -1,8 +1,9 @@
 import { Fn, vec3, float, dot, clamp, mix, smoothstep } from "three/tsl";
+import type { Node } from "three/webgpu";
 import { imperfectionUniforms } from "../imperfectionUniforms";
 import { fbmFn } from "./paperFunctions";
 
-export const applyImperfectionsFn = Fn(([color_in, base, uvCoord]: [any, any, any]) => {
+export const applyImperfectionsFn = Fn(([color_in, base, uvCoord]: [Node<"color">, Node<"color">, Node<"vec2">]) => {
   const {
     uInkBreakupScale,
     uInkBreakupStrength,
@@ -13,8 +14,8 @@ export const applyImperfectionsFn = Fn(([color_in, base, uvCoord]: [any, any, an
 
   const color = color_in.toVar();
   const luma = vec3(0.299, 0.587, 0.114);
-  const baseLuma = dot(base, luma);
-  const colLuma = dot(color, luma);
+  const baseLuma = dot(base.rgb, luma);
+  const colLuma = dot(color.rgb, luma);
   const inkMask = clamp(
     baseLuma.sub(colLuma).div(clamp(baseLuma, float(1e-3), float(1e10))),
     float(0),
@@ -28,7 +29,7 @@ export const applyImperfectionsFn = Fn(([color_in, base, uvCoord]: [any, any, an
   color.assign(mix(color, base, erode.mul(inkMask)));
 
   const grain = fbmFn(uvCoord.mul(uPaperGrainScale)).sub(0.5);
-  color.addAssign(grain.mul(uPaperGrainStrength));
+  color.assign(color.add(grain.mul(uPaperGrainStrength)));
 
   return color;
 });

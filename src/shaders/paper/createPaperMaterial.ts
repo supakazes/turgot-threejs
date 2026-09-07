@@ -1,4 +1,5 @@
-import { MeshBasicNodeMaterial, type Node } from "three/webgpu";
+import { MeshBasicNodeMaterial } from "three/webgpu";
+import type { Node } from "three/webgpu";
 import {
   Fn,
   varying,
@@ -22,8 +23,8 @@ import { uPaperScale, uPaperMatrix } from "./paperUniforms";
 const vWorldPosition = varying(positionWorld);
 const vWorldNormal = varying(normalWorld);
 const vWallUV = varying(uv());
-const vWallSize = varying(attribute("aWallSize", "vec2"));
-const vFacadeMetric = varying(
+const vWallSize: Node<"vec2"> = varying(attribute("aWallSize", "vec2"));
+const vFacadeMetric: Node<"vec2"> = varying(
   Fn(() => {
     const worldNorm = normalWorld;
     const up = vec3(0, 1, 0);
@@ -33,14 +34,14 @@ const vFacadeMetric = varying(
 );
 
 type SurfaceLayersFn = (
-  base: any,
-  uvCoord: any,
-  wallUV: any,
-  wallSize: any,
-  metric: any,
-  hasWallData: any,
-  worldNormal: any,
-) => any;
+  base: Node<"color">,
+  uvCoord: Node<"vec2">,
+  wallUV: Node<"vec2">,
+  wallSize: Node<"vec2">,
+  metric: Node<"vec2">,
+  hasWallData: Node<"bool">,
+  worldNormal: Node<"vec3">,
+) => Node<"color">;
 
 export function createPaperMaterial(surfaceLayersFn: SurfaceLayersFn): MeshBasicNodeMaterial {
   const material = new MeshBasicNodeMaterial();
@@ -49,8 +50,7 @@ export function createPaperMaterial(surfaceLayersFn: SurfaceLayersFn): MeshBasic
     const paperPos = uPaperMatrix.mul(vec4(vWorldPosition, 1.0)).xyz;
     const paperUV = paperPos.xy.mul(uPaperScale);
     const base = paperColorFn(paperUV);
-    const vWallSizeVec = vWallSize as unknown as Node<"vec2">;
-    const hasWallData = dot(vWallSizeVec, vWallSizeVec).greaterThan(0.0);
+    const hasWallData = dot(vWallSize, vWallSize).greaterThan(0.0);
     const worldNorm = normalize(vWorldNormal);
     const color = surfaceLayersFn(
       base,

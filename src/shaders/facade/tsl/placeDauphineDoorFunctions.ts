@@ -11,10 +11,11 @@ import {
   smoothstep,
   select,
 } from "three/tsl";
+import type { Node } from "three/webgpu";
 import { placeDauphineDoorUniforms } from "../facadeUniforms";
 import { sdBoxFn, sdCircleFn } from "./sdfFunctions";
 
-export const placeDauphineDoorDistFn = Fn(([p]: [any]) => {
+export const placeDauphineDoorDistFn = Fn(([p]: [Node<"vec2">]) => {
   const {
     uDoorWidth,
     uDoorBodyHeight,
@@ -74,7 +75,7 @@ export const placeDauphineDoorDistFn = Fn(([p]: [any]) => {
   return d;
 });
 
-export const placeDauphineDoorsFn = Fn(([base, along, height]: [any, any, any]) => {
+export const placeDauphineDoorsFn = Fn(([base, along, height]: [Node<"color">, Node<"float">, Node<"float">]) => {
   const { uDoorPitch, uDoorInkColor } = placeDauphineDoorUniforms;
 
   const localX = fract(along.div(uDoorPitch)).sub(0.5).mul(uDoorPitch);
@@ -84,5 +85,5 @@ export const placeDauphineDoorsFn = Fn(([base, along, height]: [any, any, any]) 
   const aa = clamp(max(fwidth(along), fwidth(height)), float(1e-4), float(0.05));
   const ink = float(1).sub(smoothstep(aa.negate(), aa, d));
 
-  return select(height.lessThan(0.0), base, mix(base, uDoorInkColor, ink));
+  return select(height.lessThan(0.0), base, mix(base, uDoorInkColor, ink)).toColor();
 });
