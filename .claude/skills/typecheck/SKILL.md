@@ -62,4 +62,10 @@ const user = data as User;
 function isUser(data: unknown): data is User {
   return typeof data === "object" && data !== null && "id" in data;
 }
+
+// ❌ Avoid casting and casting as unknown as
+return col as unknown as Node<"color">;
+
+// ✅ Trust upstream types
+return col;
 ```
