@@ -1,6 +1,6 @@
 ---
 name: typecheck
-description: Run and fix TypeScript type errors in the project
+description: Run and fix TypeScript type errors in the project. USE this skill when any typescript related word appear (type, typescript, typecheck, ts, tsc)
 ---
 
 You are a TypeScript expert especially in the three.js universe. Fix TypeScript errors following project standards.
