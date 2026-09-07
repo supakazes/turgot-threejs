@@ -80,55 +80,124 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
 });
 
 // Turgot image map
+
 const elevationTex = new THREE.TextureLoader().load("./images/elevation-data.png");
-elevationTex.flipY = false; // match GLTFLoader convention (flipY=false, V=0=image top)
+
+elevationTex.flipY = false;
+elevationTex.colorSpace = THREE.NoColorSpace;
+
+elevationTex.generateMipmaps = true;
+elevationTex.minFilter = THREE.LinearMipmapLinearFilter;
+elevationTex.magFilter = THREE.LinearFilter;
+
+elevationTex.wrapS = THREE.ClampToEdgeWrapping;
+elevationTex.wrapT = THREE.ClampToEdgeWrapping;
 
 loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
   scene.add(gltf.scene);
+
   models.floor = gltf.scene.getObjectByName(OBJECTS.FLOOR)!;
+
   models.floor.position.y = -1;
   models.floor.visible = guiParams.showImageMap;
 
   models.floor.traverse((child) => {
     if (!(child instanceof THREE.Mesh)) return;
+
     const existingMat = child.material as THREE.MeshStandardMaterial;
 
-    // Replace with a subdivided plane so displacementMap has enough vertices.
+    // -------------------------------------------------------------------------
+    // Original floor bounds
+    // -------------------------------------------------------------------------
+
     child.geometry.computeBoundingBox();
+
     const lb = child.geometry.boundingBox!;
+
     const w = lb.max.x - lb.min.x;
     const d = lb.max.z - lb.min.z;
-    const segs = Math.max(64, Math.ceil(Math.max(w, d) / 5));
-    const subdivided = new THREE.PlaneGeometry(w, d, segs, segs);
+
+    // -------------------------------------------------------------------------
+    // Use the elevation texture resolution as a guide for geometry density.
+    //
+    // We don't need one vertex per texel, but 256 can be far too coarse for
+    // a high-resolution elevation map.
+    // -------------------------------------------------------------------------
+
+    const texWidth = elevationTex.image.width;
+    const texHeight = elevationTex.image.height;
+
+    // One geometry segment for approximately every 2 elevation texels.
+    const texelStep = 1;
+
+    const segsX = Math.max(64, Math.round((texWidth - 1) / texelStep));
+
+    const segsZ = Math.max(64, Math.round((texHeight - 1) / texelStep));
+
+    console.log(
+      `Floor geometry: ${segsX} × ${segsZ} segments`,
+      `Elevation texture: ${texWidth} × ${texHeight}`,
+    );
+
+    // -------------------------------------------------------------------------
+    // Subdivided floor
+    // -------------------------------------------------------------------------
+
+    const subdivided = new THREE.PlaneGeometry(w, d, segsX, segsZ);
+
     subdivided.rotateX(-Math.PI / 2);
-    // rotateX flips V relative to the original GLB UV — restore it
+
+    // Restore GLTF V orientation.
     const uvAttr = subdivided.attributes.uv as THREE.BufferAttribute;
-    for (let i = 0; i < uvAttr.count; i++) uvAttr.setY(i, 1 - uvAttr.getY(i));
+
+    for (let i = 0; i < uvAttr.count; i++) {
+      uvAttr.setY(i, 1 - uvAttr.getY(i));
+    }
+
     subdivided.translate(
       (lb.min.x + lb.max.x) / 2,
       (lb.min.y + lb.max.y) / 2,
       (lb.min.z + lb.max.z) / 2,
     );
-    child.geometry = subdivided;
+
+    // -------------------------------------------------------------------------
+    // Material
+    // -------------------------------------------------------------------------
 
     const mat = new THREE.MeshStandardMaterial();
-    if (existingMat.map) mat.map = existingMat.map;
+
+    if (existingMat.map) {
+      mat.map = existingMat.map;
+    }
+
     mat.displacementMap = elevationTex;
     mat.displacementScale = guiParams.elevationScale;
     mat.displacementBias = -guiParams.elevationScale;
+
+    child.geometry.dispose();
+    child.geometry = subdivided;
     child.material = mat;
 
-    // add plane for the Seine
+    // -------------------------------------------------------------------------
+    // Seine plane
+    // -------------------------------------------------------------------------
+
     const scenePlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(w, d, segs, segs),
-      new THREE.MeshStandardMaterial({ color: 0xeeeeee, side: THREE.DoubleSide }),
+      new THREE.PlaneGeometry(w, d, segsX, segsZ),
+      new THREE.MeshStandardMaterial({
+        color: 0xcccccc,
+        side: THREE.DoubleSide,
+      }),
     );
+
     scenePlane.rotateX(-Math.PI / 2);
+
     scenePlane.position.set(
       (lb.min.x + lb.max.x) / 2,
-      (lb.min.y + lb.max.y) / 2 - 1.2,
+      (lb.min.y + lb.max.y) / 2 - 4,
       (lb.min.z + lb.max.z) / 2,
     );
+
     scene.add(scenePlane);
   });
 });
