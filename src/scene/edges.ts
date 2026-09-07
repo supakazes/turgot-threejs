@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 
 // Overlay of hard edges (where faces meet above the angle threshold) so the
 // building silhouette stays readable on top of the paper shader.

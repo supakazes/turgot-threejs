@@ -10,19 +10,20 @@ body {
   background: url(/public/images/frame-pattern.jpg) 0 0 repeat;
 }
 
-/* canvas */
-#app {
+#canvas-container {
   position: fixed;
   left: 3.1rem;
   right: 3.1rem;
   top: 2.9rem;
   bottom: 2.9rem;
   overflow: hidden;
+  z-index: 1;
 }
+
 canvas {
   display: block;
-  position: relative;
-  z-index: 1;
+  width: 100%;
+  height: 100%;
 }
 
 /* GUI */

@@ -1,7 +1,6 @@
-// Shared distortion uniforms — used by warpShape() in distortion.glsl. Like
-// paperUniforms, every paper material references these same objects, so a GUI
-// change warps every facade/roof at once.
+import { uniform } from "three/tsl";
+
 export const distortionUniforms = {
-  uDistortStrength: { value: 0.15 }, // displacement amplitude (m); 0 = perfect edges
-  uDistortScale: { value: 3.0 }, // wobble frequency (higher = tighter)
+  uDistortStrength: uniform(0.15),
+  uDistortScale: uniform(3.0),
 };

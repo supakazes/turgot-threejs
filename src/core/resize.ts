@@ -1,8 +1,8 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 
 function onResize(
   camera: THREE.OrthographicCamera,
-  renderer: THREE.WebGLRenderer,
+  renderer: THREE.WebGPURenderer,
   app: HTMLElement,
   frustumSize: number,
 ) {
@@ -23,7 +23,7 @@ function onResize(
 
 export function setupResize(
   camera: THREE.OrthographicCamera,
-  renderer: THREE.WebGLRenderer,
+  renderer: THREE.WebGPURenderer,
   app: HTMLElement,
   frustumSize: number,
 ) {

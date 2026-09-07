@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import { createFacadeMaterial } from "./facade/facadeMaterial";
 import { createRoofMaterial } from "./roof/roofMaterial";
 import { createDefaultPaperMaterial } from "./paper/paperMaterial";

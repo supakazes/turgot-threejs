@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import { MapControls } from "three/addons/controls/MapControls.js";
 
 const RESET_DURATION = 400;
@@ -11,7 +11,7 @@ export function createCompass(
   controls: MapControls,
   camera: THREE.Camera,
   initialAzimuth: number,
-  initialPolar: number
+  initialPolar: number,
 ) {
   const container = document.createElement("div");
   container.id = "compass";

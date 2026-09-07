@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import GUI from "lil-gui";
 import { paperUniforms } from "../shaders/paper/paperUniforms";
 import { imperfectionUniforms } from "../shaders/paper/imperfectionUniforms";

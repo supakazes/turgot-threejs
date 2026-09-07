@@ -1,9 +1,8 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import { MapControls } from "three/addons/controls/MapControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { setupResize } from "./core/resize";
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
-import { renderer } from "./renderer/renderer";
 import { applyPaperShader } from "./shaders/applyPaperShader";
 
 import { addEdges, setEdgesVisible } from "./scene/edges";
@@ -12,9 +11,17 @@ import { lightUniforms } from "./shaders/facade/facadeUniforms";
 import { createGui } from "./ui/gui";
 import { createCompass } from "./ui/compass";
 
-// app
-const app = document.getElementById("app")!;
-app.appendChild(renderer.domElement);
+// canvas
+const canvasContainer = document.getElementById("canvas-container")! as HTMLDivElement;
+const canvas = document.querySelector("canvas")! as HTMLCanvasElement;
+export const renderer = new THREE.WebGPURenderer({ canvas, antialias: true, alpha: true });
+
+renderer.debug.checkShaderErrors = true;
+renderer.setClearColor("#000000", 0);
+// WebGPU canvas uses bgra8unorm-srgb (hardware sRGB), so the renderer must NOT
+// apply a second linearToSRGB conversion in its own pipeline — LinearSRGBColorSpace
+// skips that pass and lets the canvas format handle it.
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
 // Controls
 const controls = new MapControls(camera, renderer.domElement); // behaves like a map
@@ -249,17 +256,18 @@ scene.add(lightArrow);
 createGui({ params: guiParams, models, setEdgesVisible, lightArrow, lightParams, updateLightDir });
 
 // Resize
-setupResize(camera, renderer, app, FRUSTRUM_SIZE);
+setupResize(camera, renderer, canvasContainer, FRUSTRUM_SIZE);
+
+const arrowForward = new THREE.Vector3();
 
 // Render loop
-const arrowForward = new THREE.Vector3();
-function animate() {
-  requestAnimationFrame(animate);
+const timer = new THREE.Timer();
+timer.connect(document);
 
+function tick() {
+  timer.update();
   controls.update();
-
   compass.update();
-
   paperRegistry.update(camera);
 
   // Keep the light arrow in front of the camera, pointing toward the light.
@@ -271,4 +279,5 @@ function animate() {
 
   renderer.render(scene, camera);
 }
-animate();
+
+renderer.setAnimationLoop(tick);
