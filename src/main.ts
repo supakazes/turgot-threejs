@@ -258,7 +258,7 @@ const lightArrow = new THREE.ArrowHelper(
 lightArrow.visible = false;
 scene.add(lightArrow);
 
-createGui({ params: guiParams, models, setEdgesVisible, lightArrow, lightParams, updateLightDir });
+createGui({ renderer, params: guiParams, models, setEdgesVisible, lightArrow, lightParams, updateLightDir });
 
 // Resize
 setupResize(camera, renderer, canvasContainer, FRUSTRUM_SIZE);
