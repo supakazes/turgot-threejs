@@ -189,28 +189,6 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
     child.geometry.dispose();
     child.geometry = subdivided;
     child.material = mat;
-
-    // -------------------------------------------------------------------------
-    // Seine plane
-    // -------------------------------------------------------------------------
-
-    const scenePlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(w, d, segsX, segsZ),
-      new THREE.MeshStandardMaterial({
-        color: 0xcccccc,
-        side: THREE.DoubleSide,
-      }),
-    );
-
-    scenePlane.rotateX(-Math.PI / 2);
-
-    scenePlane.position.set(
-      (lb.min.x + lb.max.x) / 2,
-      (lb.min.y + lb.max.y) / 2 - 4,
-      (lb.min.z + lb.max.z) / 2,
-    );
-
-    scene.add(scenePlane);
   });
 });
 
@@ -258,7 +236,15 @@ const lightArrow = new THREE.ArrowHelper(
 lightArrow.visible = false;
 scene.add(lightArrow);
 
-createGui({ renderer, params: guiParams, models, setEdgesVisible, lightArrow, lightParams, updateLightDir });
+createGui({
+  renderer,
+  params: guiParams,
+  models,
+  setEdgesVisible,
+  lightArrow,
+  lightParams,
+  updateLightDir,
+});
 
 // Resize
 setupResize(camera, renderer, canvasContainer, FRUSTRUM_SIZE);

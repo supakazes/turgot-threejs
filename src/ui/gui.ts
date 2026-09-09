@@ -53,9 +53,12 @@ export function createGui({
 
   const scene = inspector.createParameters("Scene");
 
-  scene.add(params, "showImageMap").name("Show image map").onChange((visible) => {
-    if (models.floor) models.floor.visible = visible;
-  });
+  scene
+    .add(params, "showImageMap")
+    .name("Show image map")
+    .onChange((visible) => {
+      if (models.floor) models.floor.visible = visible;
+    });
 
   scene.add(params, "buildings").onChange((visible) => {
     models.regularBuildings?.forEach((obj) => {
@@ -68,18 +71,6 @@ export function createGui({
     .add(params, "showEdges")
     .name("Edges")
     .onChange((visible) => setEdgesVisible(visible));
-
-  scene
-    .add(params, "elevationScale", 0, 50)
-    .name("Elevation scale")
-    .onChange((scale) => {
-      models.floor?.traverse((child) => {
-        if (!(child instanceof THREE.Mesh)) return;
-        const mat = child.material as THREE.MeshStandardMaterial;
-        mat.displacementScale = scale;
-        mat.displacementBias = -scale;
-      });
-    });
 
   // Paper
   const paper = scene.addFolder("Paper").close();
@@ -113,9 +104,7 @@ export function createGui({
   imperfections
     .add(imperfectionUniforms.uInkBreakupStrength, "value", 0, 1)
     .name("Breakup strength");
-  imperfections
-    .add(imperfectionUniforms.uInkTransparency, "value", 0, 1)
-    .name("Ink transparency");
+  imperfections.add(imperfectionUniforms.uInkTransparency, "value", 0, 1).name("Ink transparency");
   imperfections.add(imperfectionUniforms.uPaperGrainScale, "value", 1, 120).name("Grain scale");
   imperfections
     .add(imperfectionUniforms.uPaperGrainStrength, "value", 0, 0.3)
