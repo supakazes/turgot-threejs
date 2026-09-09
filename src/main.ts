@@ -10,6 +10,8 @@ import * as paperRegistry from "./shaders/paper/registry";
 import { lightUniforms } from "./shaders/facade/facadeUniforms";
 import { createGui } from "./ui/gui";
 import { createCompass } from "./ui/compass";
+import { MeshStandardNodeMaterial } from "three/webgpu";
+import { positionLocal, texture, uv, vec3 } from "three/tsl";
 
 // canvas
 const canvasContainer = document.getElementById("canvas-container")! as HTMLDivElement;
@@ -125,26 +127,17 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
     const d = lb.max.z - lb.min.z;
 
     // -------------------------------------------------------------------------
-    // Use the elevation texture resolution as a guide for geometry density.
-    //
-    // We don't need one vertex per texel, but 256 can be far too coarse for
-    // a high-resolution elevation map.
+    // Moderate geometry density
     // -------------------------------------------------------------------------
 
     const texWidth = elevationTex.image.width;
     const texHeight = elevationTex.image.height;
 
-    // One geometry segment for approximately every 2 elevation texels.
-    const texelStep = 1;
+    const texelStep = 4;
 
     const segsX = Math.max(64, Math.round((texWidth - 1) / texelStep));
 
     const segsZ = Math.max(64, Math.round((texHeight - 1) / texelStep));
-
-    console.log(
-      `Floor geometry: ${segsX} × ${segsZ} segments`,
-      `Elevation texture: ${texWidth} × ${texHeight}`,
-    );
 
     // -------------------------------------------------------------------------
     // Subdivided floor
@@ -154,7 +147,6 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
 
     subdivided.rotateX(-Math.PI / 2);
 
-    // Restore GLTF V orientation.
     const uvAttr = subdivided.attributes.uv as THREE.BufferAttribute;
 
     for (let i = 0; i < uvAttr.count; i++) {
@@ -168,18 +160,31 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
     );
 
     // -------------------------------------------------------------------------
-    // Material
+    // Node material
+    //
+    // Explicit mip level 2 gives the displacement a prefiltered elevation
+    // signal instead of sampling the full-resolution 1277 × 1214 data.
     // -------------------------------------------------------------------------
 
-    const mat = new THREE.MeshStandardMaterial();
+    const mat = new MeshStandardNodeMaterial();
+
+    mat.color.copy(existingMat.color);
+    mat.roughness = existingMat.roughness;
+    mat.metalness = existingMat.metalness;
 
     if (existingMat.map) {
-      mat.map = existingMat.map;
+      mat.colorNode = texture(existingMat.map, uv());
     }
 
-    mat.displacementMap = elevationTex;
-    mat.displacementScale = guiParams.elevationScale;
-    mat.displacementBias = -guiParams.elevationScale;
+    const height = texture(elevationTex, uv(), 2).r;
+
+    const displacement = height.mul(guiParams.elevationScale).sub(guiParams.elevationScale);
+
+    mat.positionNode = positionLocal.add(vec3(0, displacement, 0));
+
+    // -------------------------------------------------------------------------
+    // Replace floor
+    // -------------------------------------------------------------------------
 
     child.geometry.dispose();
     child.geometry = subdivided;
