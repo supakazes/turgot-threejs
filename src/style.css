@@ -19,6 +19,15 @@ body {
   overflow: hidden;
   z-index: 1;
 }
+/* for mobile */
+@media (max-width: 768px) {
+  #canvas-container {
+    left: 0.7rem;
+    right: 0.7rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+  }
+}
 
 canvas {
   display: block;
