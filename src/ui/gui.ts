@@ -10,6 +10,7 @@ import {
   hatchingUniforms,
 } from "../shaders/facade/facadeUniforms";
 import { roofLineUniforms } from "../shaders/roof/roofUniforms";
+import { waterUniforms } from "../shaders/water/waterUniforms";
 
 export interface GuiParams {
   showImageMap: boolean;
@@ -210,6 +211,22 @@ export function createGui({
     .addColor(roofLineColor, "ink")
     .name("Ink color")
     .onChange((hex) => roofLineUniforms.uRoofLineInkColor.value.set(hex));
+
+  // Water
+  const water = scene.addFolder("Water / La Seine").close();
+
+  water.add(waterUniforms.uWaterLineDensity, "value", 1, 30).name("Density (lines/UV)");
+  water.add(waterUniforms.uWaterLineThickness, "value", 0.01, 0.5).name("Thickness");
+  water.add(waterUniforms.uWaterLineStrength, "value", 0, 1).name("Strength");
+  water.add(waterUniforms.uWaterFlowSpeed, "value", 0, 0.5).name("Flow speed");
+  water.add(waterUniforms.uWaterWaveFreq, "value", 0, 20).name("Wave frequency");
+  water.add(waterUniforms.uWaterWaveAmp, "value", 0, 0.1).name("Wave amplitude");
+
+  const waterColor = { ink: `#${waterUniforms.uWaterInkColor.value.getHexString()}` };
+  water
+    .addColor(waterColor, "ink")
+    .name("Ink color")
+    .onChange((hex) => waterUniforms.uWaterInkColor.value.set(hex));
 
   // Sun direction
   const light = scene.addFolder("Sun direction (fake light)").close();

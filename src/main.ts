@@ -4,6 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { setupResize } from "./core/resize";
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
 import { applyPaperShader } from "./shaders/applyPaperShader";
+import { applyWaterShader } from "./shaders/applyWaterShader";
 
 import { addEdges, setEdgesVisible } from "./scene/edges";
 import * as paperRegistry from "./shaders/paper/registry";
@@ -94,6 +95,7 @@ loader.load("./models/buildings/la-seine.glb", (gltf) => {
   scene.add(gltf.scene);
   models.laSeine = gltf.scene.getObjectByName(OBJECTS.SEINE)!;
   models.laSeine.position.y = 0;
+  applyWaterShader(models.laSeine);
 });
 
 // Turgot image map
