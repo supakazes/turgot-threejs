@@ -76,6 +76,7 @@ const OBJECTS = {
   FLOOR: "planche-11-zone",
   PLACE_DAUPHINE: "place_dauphine",
   SMALL: "small",
+  SEINE: "la-seine",
 };
 
 // Place Dauphine
@@ -86,6 +87,13 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
   applyPaperShader(models.placeDauphine, true);
   addEdges(models.placeDauphine);
   setEdgesVisible(guiParams.showEdges);
+});
+
+// La Seine
+loader.load("./models/buildings/la-seine.glb", (gltf) => {
+  scene.add(gltf.scene);
+  models.laSeine = gltf.scene.getObjectByName(OBJECTS.SEINE)!;
+  models.laSeine.position.y = 0;
 });
 
 // Turgot image map
@@ -191,8 +199,6 @@ loader.load("./models/buildings/planche-11-zone.glb", (gltf) => {
     child.material = mat;
   });
 });
-
-// la seine
 
 // Regular buildings
 loader.load("./models/buildings/scene.glb", (gltf) => {
