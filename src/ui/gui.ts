@@ -215,12 +215,16 @@ export function createGui({
   // Water
   const water = scene.addFolder("Water / La Seine").close();
 
-  water.add(waterUniforms.uWaterLineDensity, "value", 1, 30).name("Density (lines/UV)");
+  water.add(waterUniforms.uWaterLineDensity, "value", 5, 400).name("Density (lines/UV)");
   water.add(waterUniforms.uWaterLineThickness, "value", 0.01, 0.5).name("Thickness");
   water.add(waterUniforms.uWaterLineStrength, "value", 0, 1).name("Strength");
   water.add(waterUniforms.uWaterFlowSpeed, "value", 0, 0.5).name("Flow speed");
   water.add(waterUniforms.uWaterWaveFreq, "value", 0, 20).name("Wave frequency");
   water.add(waterUniforms.uWaterWaveAmp, "value", 0, 0.1).name("Wave amplitude");
+  water.add(waterUniforms.uWaterLineWobble, "value", 0, 0.05).name("Line wobble");
+  water.add(waterUniforms.uWaterThicknessVar, "value", 0, 0.5).name("Thickness variation");
+  water.add(waterUniforms.uWaterNoiseScale, "value", 0.5, 20).name("Noise scale");
+  water.add(waterUniforms.uWaterNoiseStrength, "value", 0, 0.03).name("Noise strength");
 
   const waterColor = { ink: `#${waterUniforms.uWaterInkColor.value.getHexString()}` };
   water
