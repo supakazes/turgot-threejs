@@ -51,7 +51,7 @@ Rules:
 - each function takes the current `color` and returns the color with its element drawn on top, so layers stack in a fixed order
 - a new facade type = a new ordering / subset of these functions, not a rewrite
 
-**Imperfections run last, always.** `warpShape()` roughs the coordinate *before* any element is drawn; `applyImperfections()` (ink breakup, transparency, grain) runs *after every element* on the finished ink-on-paper color. No surface draws shapes after imperfections. Because both live in the shared paper base, every composed facade inherits them for free.
+**Imperfections run last, always.** `warpShape()` roughs the coordinate _before_ any element is drawn; `applyImperfections()` (ink breakup, transparency, grain) runs _after every element_ on the finished ink-on-paper color. No surface draws shapes after imperfections. Because both live in the shared paper base, every composed facade inherits them for free.
 
 ---
 
@@ -205,7 +205,7 @@ Small procedural imperfections preserve the engraved appearance. Two shared pass
 - **`warpShape()`** (before shapes): nudges the shape coordinate by an fbm field so every edge — windows, doors, floor lines — comes out hand-drawn wavy instead of ruler-straight.
 - **`applyImperfections()`** (after shapes): ink transparency (paper bleeds through ink), ink breakup (dry/broken strokes), and fine paper grain.
 
-Set any strength to `0` (via lil-gui) to disable that effect.
+Set any strength to `0` (via inpector) to disable that effect.
 
 ---
 
@@ -218,7 +218,7 @@ uPaperMatrix
 uPaperScale
 ```
 
-Every other knob is also a uniform, shared across all materials of a kind and live-editable from lil-gui:
+Every other knob is also a uniform, shared across all materials of a kind and live-editable from inspector:
 
 ```
 paper          base color, stain scale/strength, warp, speck layers
@@ -260,13 +260,13 @@ Shaders generate the engraving.
 
 # Renderer Vocabulary
 
-| Blender    | Three.js                          |
-| ---------- | --------------------------------- |
-| Facade     | facade surface layers ✅          |
-| Roof       | roof material (paper-only, TODO)  |
-| Chimney    | planned                           |
-| Water      | planned                           |
-| Vegetation | planned                           |
+| Blender    | Three.js                         |
+| ---------- | -------------------------------- |
+| Facade     | facade surface layers ✅         |
+| Roof       | roof material (paper-only, TODO) |
+| Chimney    | planned                          |
+| Water      | planned                          |
+| Vegetation | planned                          |
 
 Blender materials identify surface types.
 
