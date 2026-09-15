@@ -1,7 +1,8 @@
 import * as THREE from "three/webgpu";
-import { replaceMaterial } from "./replaceMaterial";
+
 import { createDefaultPaperMaterial } from "./paper/paperMaterial";
 import { register } from "./paper/registry";
+import { replaceMaterial } from "./replaceMaterial";
 
 type RoofMaterial = THREE.Material & {
   _uRoofBaseHeight: { value: number };

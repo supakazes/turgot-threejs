@@ -1,18 +1,19 @@
 import {
+  distance,
+  dot,
+  float,
+  floor,
   Fn,
+  fract,
+  Loop,
+  mix,
+  select,
+  smoothstep,
   vec2,
   vec3,
-  float,
-  fract,
-  floor,
-  dot,
-  mix,
-  distance,
-  smoothstep,
-  Loop,
-  select,
 } from "three/tsl";
 import type { Node } from "three/webgpu";
+
 import { paperUniforms } from "../paperUniforms";
 
 export const hashFn = Fn(([p]: [Node<"vec2">]) => {

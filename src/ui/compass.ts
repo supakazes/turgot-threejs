@@ -1,5 +1,5 @@
-import * as THREE from "three/webgpu";
 import { MapControls } from "three/addons/controls/MapControls.js";
+import * as THREE from "three/webgpu";
 
 const RESET_DURATION = 400;
 

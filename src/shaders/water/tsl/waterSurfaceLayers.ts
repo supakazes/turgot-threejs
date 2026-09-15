@@ -1,5 +1,6 @@
 import { Fn } from "three/tsl";
 import type { Node } from "three/webgpu";
+
 import { waterLineFn } from "./waterLineFunctions";
 
 export const waterSurfaceLayersFn = Fn(

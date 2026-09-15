@@ -1,5 +1,5 @@
-import * as THREE from "three/webgpu";
 import { MapControls } from "three/addons/controls/MapControls.js";
+import * as THREE from "three/webgpu";
 
 export const FRUSTRUM_SIZE = 1000;
 

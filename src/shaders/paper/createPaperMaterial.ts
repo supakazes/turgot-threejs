@@ -1,23 +1,24 @@
-import { MeshBasicNodeMaterial } from "three/webgpu";
-import type { Node } from "three/webgpu";
 import {
+  attribute,
+  cross,
+  dot,
+  float,
   Fn,
+  normalize,
+  normalWorld,
+  positionWorld,
+  uv,
   varying,
   vec2,
   vec3,
   vec4,
-  float,
-  positionWorld,
-  normalWorld,
-  uv,
-  attribute,
-  normalize,
-  cross,
-  dot,
 } from "three/tsl";
-import { paperColorFn } from "./tsl/paperFunctions";
+import type { Node } from "three/webgpu";
+import { MeshBasicNodeMaterial } from "three/webgpu";
+
+import { uPaperMatrix,uPaperScale } from "./paperUniforms";
 import { applyImperfectionsFn } from "./tsl/imperfectionsFunctions";
-import { uPaperScale, uPaperMatrix } from "./paperUniforms";
+import { paperColorFn } from "./tsl/paperFunctions";
 
 // Vertex-stage varyings shared by all paper materials
 const vWorldPosition = varying(positionWorld);

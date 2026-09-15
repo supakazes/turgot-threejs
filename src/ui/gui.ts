@@ -1,14 +1,15 @@
-import * as THREE from "three/webgpu";
 import { Inspector } from "three/addons/inspector/Inspector.js";
-import { paperUniforms } from "../shaders/paper/paperUniforms";
-import { imperfectionUniforms } from "../shaders/paper/imperfectionUniforms";
-import { distortionUniforms } from "../shaders/paper/distortionUniforms";
+import * as THREE from "three/webgpu";
+
 import {
   facadeUniforms,
-  placeDauphineDoorUniforms,
   floorLineUniforms,
   hatchingUniforms,
+  placeDauphineDoorUniforms,
 } from "../shaders/facade/facadeUniforms";
+import { distortionUniforms } from "../shaders/paper/distortionUniforms";
+import { imperfectionUniforms } from "../shaders/paper/imperfectionUniforms";
+import { paperUniforms } from "../shaders/paper/paperUniforms";
 import { roofLineUniforms } from "../shaders/roof/roofUniforms";
 import { waterUniforms } from "../shaders/water/waterUniforms";
 

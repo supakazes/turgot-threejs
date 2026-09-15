@@ -1,5 +1,5 @@
-import * as THREE from "three/webgpu";
 import { uniform } from "three/tsl";
+import * as THREE from "three/webgpu";
 
 const PAPER_SCALE = 0.08;
 

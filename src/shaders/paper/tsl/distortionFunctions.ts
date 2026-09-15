@@ -1,5 +1,6 @@
-import { Fn, vec2, select, float } from "three/tsl";
+import { float,Fn, select, vec2 } from "three/tsl";
 import type { Node } from "three/webgpu";
+
 import { distortionUniforms } from "../distortionUniforms";
 import { fbmFn } from "./paperFunctions";
 

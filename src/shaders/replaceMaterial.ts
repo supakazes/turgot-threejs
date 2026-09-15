@@ -1,7 +1,8 @@
 import * as THREE from "three/webgpu";
+
 import { createFacadeMaterial } from "./facade/facadeMaterial";
-import { createRoofMaterial } from "./roof/roofMaterial";
 import { createDefaultPaperMaterial } from "./paper/paperMaterial";
+import { createRoofMaterial } from "./roof/roofMaterial";
 
 // Maps a mesh material to its paper-based shader by material name.
 // Paper is the shared base layer for every surface, so unknown materials

@@ -1,17 +1,18 @@
 import {
-  Fn,
-  vec2,
+  clamp,
   float,
-  min,
-  max,
-  mix,
+  Fn,
   fract,
   fwidth,
-  clamp,
-  smoothstep,
+  max,
+  min,
+  mix,
   select,
+  smoothstep,
+  vec2,
 } from "three/tsl";
 import type { Node } from "three/webgpu";
+
 import { placeDauphineDoorUniforms } from "../facadeUniforms";
 import { sdBoxFn, sdCircleFn } from "./sdfFunctions";
 

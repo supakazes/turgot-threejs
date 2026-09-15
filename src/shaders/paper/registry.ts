@@ -1,4 +1,5 @@
 import * as THREE from "three/webgpu";
+
 import { uPaperMatrix } from "./paperUniforms";
 
 const paperMatrix = new THREE.Matrix4();

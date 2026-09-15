@@ -1,7 +1,8 @@
-import { Fn, float, fract, abs, sin, mix, smoothstep, clamp, fwidth, time } from "three/tsl";
+import { abs, clamp, float, Fn, fract, fwidth, mix, sin, smoothstep, time } from "three/tsl";
 import type { Node } from "three/webgpu";
-import { waterUniforms } from "../waterUniforms";
+
 import { noiseFn } from "../../paper/tsl/paperFunctions";
+import { waterUniforms } from "../waterUniforms";
 
 export const waterLineFn = Fn(([base, wallUV]: [Node<"color">, Node<"vec2">]) => {
   const {

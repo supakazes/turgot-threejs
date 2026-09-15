@@ -1,5 +1,6 @@
-import { Fn, float, select, clamp, dot, normalize, max } from "three/tsl";
+import { clamp, dot, float, Fn, max,normalize, select } from "three/tsl";
 import type { Node } from "three/webgpu";
+
 import { lightUniforms } from "../../facade/facadeUniforms";
 import { warpShapeFn } from "../../paper/tsl/distortionFunctions";
 import { roofHorizontalLinesFn } from "./roofLineFunctions";
