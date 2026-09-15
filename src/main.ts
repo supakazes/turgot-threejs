@@ -15,7 +15,7 @@ import { createCompass } from "./ui/compass";
 import { createGui } from "./ui/gui";
 
 // canvas
-const canvasContainer = document.getElementById("canvas-container")! as HTMLDivElement;
+const canvasContainer = document.getElementById("canvas-container");
 const canvas = document.querySelector("canvas")! as HTMLCanvasElement;
 export const renderer = new THREE.WebGPURenderer({ canvas, antialias: true, alpha: true });
 
