@@ -1,5 +1,5 @@
-import * as THREE from "three/webgpu";
 import { uniform } from "three/tsl";
+import * as THREE from "three/webgpu";
 
 export const roofLineUniforms = {
   uRoofLineDensity: uniform(0.162),

@@ -1,21 +1,21 @@
-import * as THREE from "three/webgpu";
 import { MapControls } from "three/addons/controls/MapControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { setupResize } from "./core/resize";
+import { positionLocal, texture, uv, vec3 } from "three/tsl";
+import * as THREE from "three/webgpu";
+import { MeshStandardNodeMaterial } from "three/webgpu";
+
 import { camera, FRUSTRUM_SIZE, initializeCamera } from "./camera/camera";
+import { setupResize } from "./core/resize";
+import { addEdges, setEdgesVisible } from "./scene/edges";
 import { applyPaperShader } from "./shaders/applyPaperShader";
 import { applyWaterShader } from "./shaders/applyWaterShader";
-
-import { addEdges, setEdgesVisible } from "./scene/edges";
-import * as paperRegistry from "./shaders/paper/registry";
 import { lightUniforms } from "./shaders/facade/facadeUniforms";
-import { createGui } from "./ui/gui";
+import * as paperRegistry from "./shaders/paper/registry";
 import { createCompass } from "./ui/compass";
-import { MeshStandardNodeMaterial } from "three/webgpu";
-import { positionLocal, texture, uv, vec3 } from "three/tsl";
+import { createGui } from "./ui/gui";
 
 // canvas
-const canvasContainer = document.getElementById("canvas-container")! as HTMLDivElement;
+const canvasContainer = document.getElementById("canvas-container");
 const canvas = document.querySelector("canvas")! as HTMLCanvasElement;
 export const renderer = new THREE.WebGPURenderer({ canvas, antialias: true, alpha: true });
 

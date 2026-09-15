@@ -1,4 +1,4 @@
-import { Fn, vec2, float, abs, max, min, length } from "three/tsl";
+import { abs, float, Fn, length,max, min, vec2 } from "three/tsl";
 import type { Node } from "three/webgpu";
 
 export const sdBoxFn = Fn(([p, halfSize]: [Node<"vec2">, Node<"vec2">]) => {

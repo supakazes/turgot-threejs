@@ -1,6 +1,7 @@
 import * as THREE from "three/webgpu";
-import { createWaterMaterial } from "./water/waterMaterial";
+
 import { register } from "./paper/registry";
+import { createWaterMaterial } from "./water/waterMaterial";
 
 function make() {
   const m = createWaterMaterial();

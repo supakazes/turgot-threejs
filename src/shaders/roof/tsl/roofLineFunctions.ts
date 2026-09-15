@@ -1,5 +1,6 @@
-import { Fn, float, clamp, mix, abs, fract, fwidth, smoothstep } from "three/tsl";
+import { abs, clamp, float, Fn, fract, fwidth, mix, smoothstep } from "three/tsl";
 import type { Node } from "three/webgpu";
+
 import { roofLineUniforms } from "../roofUniforms";
 
 export const roofHorizontalLinesFn = Fn(([col_in, height, climb, light]: [Node<"color">, Node<"float">, Node<"float">, Node<"float">]) => {

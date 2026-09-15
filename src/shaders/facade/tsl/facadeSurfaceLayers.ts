@@ -1,27 +1,28 @@
 import {
-  Fn,
-  vec2,
-  vec3,
-  float,
-  select,
-  fract,
-  floor,
   clamp,
+  dot,
+  float,
+  floor,
+  Fn,
+  fract,
+  fwidth,
+  If,
   max,
   mix,
-  smoothstep,
-  fwidth,
   normalize,
-  dot,
-  If,
+  select,
+  smoothstep,
+  vec2,
+  vec3,
 } from "three/tsl";
 import type { Node } from "three/webgpu";
-import { facadeUniforms, lightUniforms } from "../facadeUniforms";
+
 import { warpShapeFn } from "../../paper/tsl/distortionFunctions";
-import { sdBoxFn } from "./sdfFunctions";
+import { facadeUniforms, lightUniforms } from "../facadeUniforms";
 import { facadeFloorLinesFn } from "./floorLineFunctions";
 import { facadeHatchingFn } from "./hatchingFunctions";
 import { placeDauphineDoorsFn } from "./placeDauphineDoorFunctions";
+import { sdBoxFn } from "./sdfFunctions";
 
 export const facadeSurfaceLayersFn = Fn(
   ([base, _uvPaper, wallUV, wallSize, metric, hasWallData, worldNormal]: [

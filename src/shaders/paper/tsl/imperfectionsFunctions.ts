@@ -1,5 +1,6 @@
-import { Fn, vec3, float, dot, clamp, mix, smoothstep } from "three/tsl";
+import { clamp, dot, float, Fn, mix, smoothstep,vec3 } from "three/tsl";
 import type { Node } from "three/webgpu";
+
 import { imperfectionUniforms } from "../imperfectionUniforms";
 import { fbmFn } from "./paperFunctions";
 

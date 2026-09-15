@@ -1,5 +1,6 @@
-import { Fn, float, abs, floor, min, mix, smoothstep, clamp, fwidth, select } from "three/tsl";
+import { abs, clamp, float, floor, Fn, fwidth, min, mix, select,smoothstep } from "three/tsl";
 import type { Node } from "three/webgpu";
+
 import { floorLineUniforms } from "../facadeUniforms";
 
 export const facadeFloorLinesFn = Fn(

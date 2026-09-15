@@ -1,5 +1,6 @@
-import { Fn, float, clamp, mix, abs, fract, fwidth, smoothstep } from "three/tsl";
+import { abs, clamp, float, Fn, fract, fwidth, mix, smoothstep } from "three/tsl";
 import type { Node } from "three/webgpu";
+
 import { hatchingUniforms } from "../facadeUniforms";
 
 export const facadeHatchingFn = Fn(([col_in, along, light]: [Node<"color">, Node<"float">, Node<"float">]) => {
