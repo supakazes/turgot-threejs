@@ -14,7 +14,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/three": "^0.185.4",
-    "cz-conventional-changelog": "^3.3.0",
+    "cz-git": "^1.14.0",
     "eslint": "^10.10.0",
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "typescript": "^6.0.3",
@@ -26,7 +26,15 @@
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "node_modules/cz-git",
+      "skipQuestions": [
+        "scope",
+        "body",
+        "breaking",
+        "footerPrefix",
+        "footer",
+        "confirmCommit"
+      ]
     }
   }
 }
