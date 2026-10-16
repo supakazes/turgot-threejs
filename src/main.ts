@@ -15,7 +15,7 @@ import { createCompass } from "./ui/compass";
 import { createGui } from "./ui/gui";
 
 // canvas
-const canvasContainer = document.getElementById("canvas-container");
+const canvasContainer = document.getElementById("canvas-container")!;
 const canvas = document.querySelector("canvas")! as HTMLCanvasElement;
 export const renderer = new THREE.WebGPURenderer({ canvas, antialias: true, alpha: true });
 
@@ -70,6 +70,7 @@ const models = {
   regularBuildings: [] as THREE.Object3D[],
   placeDauphine: undefined as THREE.Object3D | undefined,
   laSeine: undefined as THREE.Object3D | undefined,
+  pontNeuf: undefined as THREE.Object3D | undefined,
 };
 
 const OBJECTS = {
@@ -94,8 +95,17 @@ loader.load("./models/buildings/specific-buildings/place-dauphine.glb", (gltf) =
 loader.load("./models/buildings/la-seine.glb", (gltf) => {
   scene.add(gltf.scene);
   models.laSeine = gltf.scene.getObjectByName(OBJECTS.SEINE)!;
-  models.laSeine.position.y = 0;
+  models.laSeine.position.y = -10;
   applyWaterShader(models.laSeine);
+});
+
+// Pont Neuf
+loader.load("./models/buildings/specific-buildings/pont-neuf.glb", (gltf) => {
+  scene.add(gltf.scene);
+  console.log(gltf);
+  // models.pontNeuf = gltf.scene.getObjectByName("pont-neuf")!;
+  // models.pontNeuf.position.y = 0;
+  // applyWaterShader(models.pontNeuf);
 });
 
 // Turgot image map
